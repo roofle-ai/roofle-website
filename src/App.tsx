@@ -383,10 +383,10 @@ function Privacy() {
 
 function UseCases() {
   const items = [
-    ['Sales reps', 'Review talk–listen balance and discovery depth after every call.'],
-    ['Managers and leaders', 'Capture decisions and track follow-ups across 1:1s and team meetings.'],
-    ['Trainers and coaches', 'Turn sessions into notes and reflection points.'],
-    ['Founders and consultants', 'Keep client conversations organised without a note-taker joining the call.'],
+    ['Client and partner conversations', 'Keep every conversation organised without a note-taker joining the call.'],
+    ['Requirements and planning sessions', 'Capture decisions, open questions, and action items while the discussion is live.'],
+    ['1:1s and team meetings', 'Track follow-ups across standups, reviews, and check-ins, so nothing slips.'],
+    ['Calls and interviews', 'Review talk–listen balance and question depth after every conversation.'],
   ]
   return (
     <Section eyebrow="Use cases" title="Made for people who live in conversations.">
@@ -438,13 +438,39 @@ function FinalCTA() {
   )
 }
 
+const PRIVACY_QA = [
+  ['Is Roofle GDPR compliant?', 'Roofle is designed to be GDPR compliant. Processing happens on your Mac, and you decide what, if anything, is sent to an LLM provider.'],
+  ['Where is my audio stored?', 'Only on your device. Speech recognition and storage run locally, and we never receive your recordings or transcripts.'],
+  ['What leaves my computer?', 'Only text you choose to send to the LLM provider behind the API key you add in Settings, to generate notes, questions, and reviews. That provider’s privacy terms apply.'],
+  ['Do you collect personal data?', 'No recordings, transcripts, or meeting content. Joining the waitlist shares only the details you submit there.'],
+  ['Can I delete my data?', 'Yes, at any time. It lives on your Mac, so deleting it there removes it.'],
+  ['Should I tell meeting attendees?', 'Yes. Consent rules vary by country and company, so let participants know you are transcribing.'],
+]
+
 function Footer() {
+  const ref = useRef<HTMLDialogElement>(null)
   return (
     <footer className="border-t border-line">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p className="flex items-center gap-2"><Logo size={20} /><b className="text-ink">Roofle</b></p>
-        <p className="flex gap-5"><a href="#privacy" className="hover:text-ink">Privacy</a><a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="hover:text-ink">Join waitlist</a><a href="mailto:hello@roofle.app" className="hover:text-ink">Contact</a><span>© 2026</span></p>
+        <p className="flex gap-5"><button type="button" onClick={() => ref.current?.showModal()} className="hover:text-ink">Privacy</button><a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="hover:text-ink">Join waitlist</a><span>© 2026</span></p>
       </div>
+      <dialog ref={ref} onClick={e => e.target === ref.current && ref.current.close()} className="m-auto w-[min(92vw,40rem)] rounded-2xl border border-line bg-bg p-0 text-ink backdrop:bg-black/50">
+        <div className="max-h-[80vh] overflow-y-auto p-6">
+          <div className="flex items-start justify-between gap-4">
+            <h2 className="text-xl font-bold">Privacy &amp; GDPR</h2>
+            <button type="button" aria-label="Close" onClick={() => ref.current?.close()} className="text-2xl leading-none text-muted hover:text-ink">×</button>
+          </div>
+          <div className="mt-4 divide-y divide-line">
+            {PRIVACY_QA.map(([q, a]) => (
+              <details key={q} className="group py-3">
+                <summary className="flex cursor-pointer list-none items-center justify-between font-semibold">{q}<span className="text-brand transition group-open:rotate-45">+</span></summary>
+                <p className="mt-2 text-muted">{a}</p>
+              </details>
+            ))}
+          </div>
+        </div>
+      </dialog>
     </footer>
   )
 }
