@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 // Pre-production traction site: no install or download surface, only a waitlist (Google Form).
 const WAITLIST_HREF = 'https://forms.gle/RbKUuNMHeTYw9ifz7'
+const DEMO_VIDEO_ID = 'yOLk_GIRneE' // TODO: replace with the real Roofle demo video ID
 
 function Logo({ size = 28 }: { size?: number }) {
   return <img src="/favicon.svg" width={size} height={size} alt="" className="rounded-lg" />
@@ -161,7 +162,20 @@ function Hero() {
           </div>
           <p className="mt-4 text-sm text-faint">Runs on your machine. Your conversations stay yours.</p>
         </div>
-        <div className="mx-auto mt-14 max-w-4xl"><AppMock /></div>
+        {/* Animated product mock, kept for reference:
+            <div className="mx-auto mt-14 max-w-4xl"><AppMock /></div> */}
+        <div className="mx-auto mt-14 max-w-4xl">
+          <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-2xl shadow-brand/10">
+            <iframe
+              src={`https://www.youtube-nocookie.com/embed/${DEMO_VIDEO_ID}`}
+              title="Roofle demo video"
+              className="aspect-video w-full"
+              loading="lazy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
       </div>
     </section>
   )
