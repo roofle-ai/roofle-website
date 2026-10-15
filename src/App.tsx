@@ -193,40 +193,50 @@ function useTick(playing: boolean, n = 6, ms = 1000) {
 
 const chip = 'rounded-full px-1.5 py-px text-[10px] font-bold uppercase'
 const demos: Record<string, (t: number) => React.ReactNode> = {
-  'Live transcription': t => (
-    <div className="space-y-2">
-      {[['mic', 'Mic', 'What does your process look like?'], ['sys', 'System', 'Spreadsheets, and it breaks every quarter.']].slice(0, t >= 3 ? 2 : t >= 1 ? 1 : 0).map(([k, l, x]) => (
-        <p key={x} className="fade-up"><span className={`${chip} mr-1 ${k === 'mic' ? 'bg-brand-tint text-brand-strong dark:text-brand' : 'bg-insight-soft text-insight'}`}>{l}</span>{x}</p>
-      ))}
-    </div>
+  'Live transcription': () => (
+    <img
+      src="/live-transcription.gif"
+      alt="Live transcription of a meeting"
+      className="absolute inset-0 h-full w-full object-cover"
+      loading="lazy"
+      draggable={false}
+    />
   ),
   'Live notes': t => (
-    <ul className="space-y-1.5">
-      <li>• Spreadsheet process breaks quarterly</li>
-      {t >= 3 && <li key="n" className="fade-up">• Budget review with Finance in March <span className={`${chip} bg-green-soft text-green`}>Updated</span></li>}
-    </ul>
+    <img
+      src="/live-notes.gif"
+      alt="Live transcription of a meeting"
+      className="absolute inset-0 h-full w-full object-cover"
+      loading="lazy"
+      draggable={false}
+    />
   ),
-  'Suggested questions': t => (
-    <div className="space-y-2">
-      <p className={`rounded px-1 transition ${t >= 3 ? 'bg-insight-soft' : ''}`}>“Budget is a question mark, though.”</p>
-      <div className="flex items-center justify-between rounded-lg border border-line px-2 py-1.5">
-        <span>Who signs off on budget?</span>
-        <span className={`font-semibold text-insight ${t >= 2 ? 'pulse-rec' : ''}`}>Source ›</span>
-      </div>
-    </div>
+  'Suggested questions': () => (
+    <img
+      src="/notification.gif"
+      alt="Suggested question: who signs off on budget?"
+      className="absolute inset-0 h-full w-full object-cover"
+      loading="lazy"
+      draggable={false}
+    />
   ),
   'Recap on demand': t => (
-    <div className="space-y-2">
-      <span className={`inline-block rounded-full border px-2 py-0.5 font-semibold transition ${t >= 1 ? 'border-brand bg-brand-tint text-brand-strong dark:text-brand' : 'border-line'}`}>Recap · last 30s</span>
-      {t >= 2 && <p key="r" className="fade-up">Ops owns the workflow. Budget review with Finance is in March.</p>}
-    </div>
+    <img
+      src="/live-recap.gif"
+      alt="Suggested question: who signs off on budget?"
+      className="absolute inset-0 h-full w-full object-cover"
+      loading="lazy"
+      draggable={false}
+    />
   ),
   'Key figures and dates': t => (
-    <div className="flex flex-wrap gap-2">
-      {['$40k budget', 'March 14', '3 seats', 'Q3 launch'].slice(0, Math.min(t, 4)).map(x => (
-        <span key={x} className="fade-up rounded-full bg-amber-soft px-2 py-1 font-semibold text-amber">{x}</span>
-      ))}
-    </div>
+    <img
+      src="/key-dates.gif"
+      alt="Suggested question: who signs off on budget?"
+      className="absolute inset-0 h-full w-full object-cover"
+      loading="lazy"
+      draggable={false}
+    />
   ),
   'Conversation review': t => (
     <div className="space-y-2">
@@ -238,8 +248,14 @@ const demos: Record<string, (t: number) => React.ReactNode> = {
       ))}
     </div>
   ),
-  'Auto session titles': t => (
-    <p className="font-semibold text-ink">{'Discovery call with Maya: ops workflow'.slice(0, t * 8)}<span className="pulse-rec">|</span></p>
+  'Quick follow-up actions': t => (
+    <img
+      src="/one-click-follow-up.gif"
+      alt="One click follow actions"
+      className="absolute inset-0 h-full w-full object-cover"
+      loading="lazy"
+      draggable={false}
+    />
   ),
   'Menu bar and shortcuts': t => (
     <div className="space-y-2">
@@ -261,18 +277,18 @@ const demos: Record<string, (t: number) => React.ReactNode> = {
 const features: [string, string][] = [
   ['Live transcription', 'Listens to your mic and the system audio at once. Every line is tagged by source, so you know who said what.'],
   ['Live notes', 'One short notes document, rewritten as the conversation moves: summary, key points, decisions and action items.'],
-  ['Suggested questions', 'Spots gaps and vague points worth asking about. Source jumps to the exact line of the transcript it came from.'],
+  ['Suggested questions', 'Spots gaps and vague points worth asking about. A notification suggests the question and jumps to the exact line it came from.'],
   ['Recap on demand', 'Zoned out for a moment? Get a recap of the last 30 seconds in one click.'],
   ['Key figures and dates', 'Pulls out the numbers, dates and names that matter, so nothing important is buried in the transcript.'],
   ['Conversation review', 'An offline self-assessment once the session ends: a focus area and plain-language explanations. It says so when the transcript is too thin to judge.'],
-  ['Auto session titles', 'Every finished session gets a clear title, so past conversations are easy to find.'],
+  ['Quick follow-up actions', 'Every finished session gets a one click follow up actions.'],
   ['Menu bar and shortcuts', 'Lives in the menu bar with no Dock icon. Start and stop with a shortcut; nothing records until you do.'],
   ['On-device', 'Speech recognition and storage run locally. You bring your own LLM key for notes, questions and reviews.'],
 ]
 
 const icons: Record<string, string> = {
   'Live transcription': '≋', 'Live notes': '✎', 'Suggested questions': '?', 'Recap on demand': '↺', 'Key figures and dates': '#',
-  'Conversation review': '★', 'Auto session titles': 'T', 'Menu bar and shortcuts': '⌘', 'On-device': '⌂',
+  'Conversation review': '★', 'Quick follow-up actions': '★', 'Menu bar and shortcuts': '⌘', 'On-device': '⌂',
 }
 const groups: [string, number][] = [['During the call', 0], ['After the call', 5], ['Always', 7]]
 
@@ -284,7 +300,7 @@ function FeatureCard({ title, desc, playing, onPlay, onStop }: { title: string; 
       onClick={() => (playing ? onStop() : onPlay())}
       className={`group flex h-full flex-col rounded-2xl border bg-bg p-5 text-left transition hover:shadow-xl hover:shadow-brand/10 ${playing ? 'border-brand shadow-xl shadow-brand/10' : 'border-line'}`}
     >
-      <div aria-hidden="true" className="relative mb-5 h-36 w-full overflow-hidden rounded-xl bg-brand-tint p-3 text-xs text-muted">
+      <div aria-hidden="true" className="relative mb-5 aspect-[8/5] w-full overflow-hidden rounded-xl bg-brand-tint p-3 text-xs text-muted">
         {demos[title](t)}
         <span className={`absolute bottom-2 right-3 text-[10px] text-faint transition ${playing ? 'opacity-0' : 'opacity-100'}`}>Hover to play</span>
       </div>
