@@ -74,7 +74,21 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); 
 .fade-up { animation: fade-up .5s ease both; }
 @keyframes pulse-rec { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
 .pulse-rec { animation: pulse-rec 1.4s ease-in-out infinite; }
+@keyframes shine { to { background-position: 200% 0; } }
+.shine { background-size: 200% 100%; animation: shine 6s linear infinite; }
+@keyframes reveal { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@supports (animation-timeline: view()) {
+  .reveal { animation: reveal linear both; animation-timeline: view(); animation-range: entry 0% entry 40%; }
+  .reveal:nth-child(even) { animation-range: entry 15% entry 55%; }
+}
+@keyframes hl { to { background-size: 100% 100%; } }
+.hl {
+  background: linear-gradient(var(--brand-tint), var(--brand-tint)) no-repeat 0 100% / 0 100%;
+  border-radius: .25rem; padding: 0 .2em; margin: 0 -.1em;
+  animation: hl .7s ease-out forwards; animation-delay: var(--d, 0s);
+}
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .fade-up, .pulse-rec { animation: none; }
+  .fade-up, .pulse-rec, .shine, .reveal { animation: none; }
+  .hl { animation: none; background-size: 100% 100%; }
 }

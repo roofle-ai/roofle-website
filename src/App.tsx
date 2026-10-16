@@ -151,16 +151,21 @@ function Hero() {
       <div className="pointer-events-none absolute inset-x-0 top-0 h-[480px] bg-gradient-to-b from-brand-tint to-transparent" />
       <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pt-24">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-4 text-sm font-semibold text-brand-strong dark:text-brand">LISTEN. NOTE. COACH.</p>
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-6xl">Never miss what matters in a meeting.</h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-muted">
-            Roofle lives in your Mac's menu bar and listens to your meetings on your device — transcribing them live, writing the notes, suggesting the questions you should ask, and reviewing how the conversation went once it ends.
+          <p style={{ animationDelay: "0s" }} className="fade-up mb-6 inline-flex items-center gap-2 rounded-full border border-line bg-bg/70 px-3.5 py-1 text-xs font-semibold tracking-widest text-brand-strong backdrop-blur dark:text-brand">
+            <span className="size-1.5 rounded-full bg-brand" />LISTEN · NOTE · COACH
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <h1 style={{ animationDelay: ".15s" }} className="fade-up text-balance text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-6xl">
+            Tired or out of ideas?{' '}
+            <span className="shine bg-gradient-to-r from-brand-strong via-insight to-brand-strong bg-clip-text text-transparent">Roofle tells you what to ask, live.</span>
+          </h1>
+          <p style={{ animationDelay: ".3s" }} className="fade-up mx-auto mt-6 max-w-2xl text-balance text-lg leading-relaxed text-muted sm:text-xl">
+            A meeting copilot. It <b className="hl font-semibold text-ink" style={{ '--d': '.6s' } as React.CSSProperties}>listens</b> on your device, <b className="hl font-semibold text-ink" style={{ '--d': '1.1s' } as React.CSSProperties}>writes your notes</b>, and <b className="hl font-semibold text-ink" style={{ '--d': '1.6s' } as React.CSSProperties}>reviews how you did</b>.
+          </p>
+          <div style={{ animationDelay: ".5s" }} className="fade-up mt-8 flex flex-wrap justify-center gap-3">
             <Button href={WAITLIST_HREF}>Join the waitlist</Button>
-            <Button href="#review" variant="ghost">See it in action</Button>
+            <Button href="#features" variant="ghost">See it in action</Button>
           </div>
-          <p className="mt-4 text-sm text-faint">Runs on your machine. Your conversations stay yours.</p>
+          <p style={{ animationDelay: ".7s" }} className="fade-up mt-4 text-sm text-faint">No bots. Private. Runs on your device.</p>
         </div>
         {/* Animated product mock, kept for reference:
             <div className="mx-auto mt-14 max-w-4xl"><AppMock /></div> */}
@@ -176,6 +181,29 @@ function Hero() {
             />
           </div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+const HIGHLIGHTS = [
+  ['No bots', 'No bot joins your call', 'Roofle runs on your device, so nobody sees an extra guest in the meeting.'],
+  ['Works everywhere', 'Works with every meeting app', 'Zoom, Meet, Teams, or anything else with audio. If you can hear it, Roofle can too.'],
+  ['Smart questions', 'Only the questions that matter', 'No noise, no flood of prompts. Roofle suggests questions that fit your role and your goal for the call.'],
+  ['Answers tracked', 'Answered? Roofle shows you where', 'When a question gets answered, Roofle marks it resolved and pulls the answer from the transcript.'],
+]
+
+function Highlights() {
+  return (
+    <section className="bg-gradient-to-b from-brand-tint via-brand-tint/60 to-transparent">
+      <div className="mx-auto grid max-w-6xl gap-4 px-4 py-20 sm:grid-cols-2 sm:px-6">
+        {HIGHLIGHTS.map(([tag, title, line]) => (
+          <div key={tag} className="reveal rounded-2xl border border-line bg-bg p-6 transition hover:-translate-y-1 hover:border-brand-soft hover:shadow-lg hover:shadow-brand/10">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-tint px-2.5 py-1 text-xs font-semibold text-brand-strong dark:text-brand"><span className="pulse-rec size-1.5 rounded-full bg-brand" />{tag}</span>
+            <h3 className="mt-4 text-lg font-bold">{title}</h3>
+            <p className="mt-2 text-muted">{line}</p>
+          </div>
+        ))}
       </div>
     </section>
   )
@@ -283,7 +311,7 @@ const demos: Record<string, (t: number) => React.ReactNode> = {
   'On-device': t => (
     <ul className="space-y-1.5">
       {['Speech recognition', 'Transcript storage'].slice(0, Math.min(t, 2)).map(x => (
-        <li key={x} className="fade-up flex justify-between"><span>{x}</span><span className="font-semibold text-green">On your Mac ✓</span></li>
+        <li key={x} className="fade-up flex justify-between"><span>{x}</span><span className="font-semibold text-green">On your device ✓</span></li>
       ))}
     </ul>
   ),
@@ -404,7 +432,7 @@ function Privacy() {
   return (
     <Section id="privacy" eyebrow="Privacy" title="Built to run locally." tint>
       <div className="max-w-2xl space-y-4 text-lg text-muted">
-        <p>Speech recognition and storage run on your Mac, on-device. Notes, suggested questions, and reviews use an LLM through an API key you provide in Settings.</p>
+        <p>Speech recognition and storage run on your device. Notes, suggested questions, and reviews use an LLM through an API key you provide in Settings.</p>
         <p className="font-semibold text-ink">Your audio and transcripts stay on your machine.</p>
       </div>
     </Section>
@@ -512,6 +540,7 @@ export default function App() {
       <main>
         <Hero />
         <Features />
+        <Highlights />
         <Review />
         <Privacy />
         <UseCases />
