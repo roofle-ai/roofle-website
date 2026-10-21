@@ -136,6 +136,9 @@ function Nav() {
   const links = [['Features', '/#features'], ['Review', '/#review'], ['Privacy', '/#privacy'], ['FAQ', '/#faq']]
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur">
+      <a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="block bg-brand-strong px-4 py-1.5 text-center text-xs font-medium text-white dark:bg-brand dark:text-slate-950">
+        🚀 Launching soon — join the waitlist for early access →
+      </a>
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <a href="/" className="flex items-center gap-2 text-lg font-bold"><Logo /><span className="font-serif text-xl font-semibold">Roofle</span></a>
         <nav className="hidden items-center gap-7 text-sm text-muted md:flex">
