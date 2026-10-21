@@ -3,6 +3,8 @@
 
 @theme {
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Newsreader', Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
@@ -26,52 +28,78 @@
 }
 
 :root {
-  --bg: #ffffff;
-  --surface: #f8fafc;
-  --surface-2: #eef2f6;
-  --ink: #0f172a;
-  --muted: #475569;
-  --faint: #94a3b8;
-  --line: #e2e8f0;
+  --bg: #f2f3fb;
+  --surface: #e9ebf7;
+  --surface-2: #dfe2f2;
+  --ink: #14162b;
+  --muted: #4b5068;
+  --faint: #6b7090;
+  --line: #d6d9ec;
   --brand: #6366f1;
   --brand-strong: #4338ca;
   --brand-soft: #a5b4fc;
   --brand-faint: #c7d2fe;
-  --brand-tint: #eef1fe;
-  --record: #dc2626;
-  --record-soft: #fee2e2;
-  --amber: #d97706;
-  --amber-soft: #fef3c7;
+  --brand-tint: #e0e4fd;
+  --record: #b91c1c;
+  --record-soft: #fbe0dc;
+  --amber: #a16207;
+  --amber-soft: #f6ecc8;
   --insight: #0891b2;
   --insight-soft: #cffafe;
-  --green: #16a34a;
-  --green-soft: #dcfce7;
+  --green: #3f7d4e;
+  --green-soft: #dcebdc;
 }
 
 .dark {
-  --bg: #0b1020;
-  --surface: #111729;
-  --surface-2: #1a2238;
-  --ink: #f1f5f9;
-  --muted: #a3b0c5;
-  --faint: #64748b;
-  --line: #243049;
+  --bg: #0c0e1a;
+  --surface: #141728;
+  --surface-2: #1d2136;
+  --ink: #eef0fa;
+  --muted: #aab0c8;
+  --faint: #7c82a0;
+  --line: #272b45;
   --brand: #818cf8;
   --brand-strong: #a5b4fc;
   --brand-soft: #4f46e5;
   --brand-faint: #312e81;
   --brand-tint: #1b1f4a;
-  --record-soft: #4c1d1d;
-  --amber-soft: #4a3510;
+  --record-soft: #4a1f1b;
+  --amber-soft: #3f3210;
   --insight-soft: #0c3a47;
-  --green-soft: #12351f;
+  --green-soft: #1b3523;
 }
 
+.meeting {
+  --bg: #12141f;
+  --surface: #1b1e2e;
+  --surface-2: #262a3d;
+  --ink: #f1f5f9;
+  --muted: #aab3c5;
+  --faint: #7c869b;
+  --line: #2d3248;
+  --brand: #818cf8;
+  --brand-strong: #a5b4fc;
+  --brand-soft: #4f46e5;
+  --brand-faint: #312e81;
+  --brand-tint: #1b1f4a;
+  --record: #f87171;
+  --record-soft: #4a1f2a;
+  --amber: #fbbf24;
+  --amber-soft: #3f3210;
+  --insight: #22d3ee;
+  --insight-soft: #0c3a47;
+  --green: #4ade80;
+  --green-soft: #12351f;
+  color: var(--ink);
+}
 html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+h1, h2 { font-family: var(--font-serif); }
 body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); -webkit-font-smoothing: antialiased; }
 
 @keyframes fade-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 .fade-up { animation: fade-up .5s ease both; }
+@keyframes bar { 0%,100% { height: 25%; } 50% { height: 100%; } }
+.bar { height: 25%; animation: bar .6s ease-in-out infinite; }
 @keyframes pulse-rec { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
 .pulse-rec { animation: pulse-rec 1.4s ease-in-out infinite; }
 @keyframes shine { to { background-position: 200% 0; } }
@@ -89,6 +117,6 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); 
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .fade-up, .pulse-rec, .shine, .reveal { animation: none; }
+  .fade-up, .pulse-rec, .shine, .reveal, .bar { animation: none; }
   .hl { animation: none; background-size: 100% 100%; }
 }
