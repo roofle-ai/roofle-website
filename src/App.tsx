@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 // Pre-production traction site: no install or download surface, only a waitlist (Google Form).
 const WAITLIST_HREF = 'https://forms.gle/RbKUuNMHeTYw9ifz7'
-const DEMO_VIDEO_ID = 'yOLk_GIRneE' // TODO: replace with the real Roofle demo video ID
+const INTRO_VIDEO_ID = 'yOLk_GIRneE' // TODO: replace with the real Roofle intro video ID
 
 // TODO: fill these in before sharing the About page widely; they render only when set.
 const BUILDER: { name: string; note: string } | null = null
@@ -52,6 +52,14 @@ const CAPTIONS: Record<string, [string, string]> = {
   cta: ['Maya', 'That is helpful. Send me what we agreed on.'],
 }
 
+// The phrase Roofle picks out of each line; it becomes the live note in the side panel.
+const KEY: Record<string, string> = {
+  hero: 'spreadsheets, and it breaks every quarter', highlights: 'Zoom and Teams', features: 'an hour after every call',
+  review: 'budget is still a question mark', privacy: 'where recordings end up', usecases: 'client calls and our weekly planning',
+  faq: 'Finance reviews in March', cta: 'Send me what we agreed on',
+}
+const LAG = 1.4 // seconds: the phrase is picked out before Roofle reacts
+
 type Intel = { note: string; q: string; status: 'Open' | 'Resolved' | 'Unanswered' }
 const ORDER = ['hero', 'highlights', 'features', 'review', 'privacy', 'usecases', 'faq', 'cta']
 const INTEL: Record<string, Intel> = {
@@ -66,15 +74,31 @@ const INTEL: Record<string, Intel> = {
 }
 const STATUS_STYLE = { Open: 'bg-amber-soft text-amber', Resolved: 'bg-green-soft text-green', Unanswered: 'bg-record-soft text-record' }
 
-function Tile({ name, speaking, muted, tone, children }: { name: string; speaking: boolean; muted?: boolean; tone: string; children: React.ReactNode }) {
+// Hero call window: two people talking, Roofle's live notes, then a notification with the question to ask.
+// Illustrated avatar: no photos to license or host. The mouth moves while speaking.
+function Face({ skin, hair, long, speaking }: { skin: string; hair: string; long?: boolean; speaking: boolean }) {
   return (
-    <div className={`relative grid aspect-[4/3] place-items-center rounded-xl bg-gradient-to-br ${tone} transition ${speaking ? 'ring-2 ring-green' : 'ring-1 ring-line'}`}>
-      {children}
+    <svg viewBox="0 0 100 100" className="h-full" aria-hidden="true">
+      {long && <rect x="22" y="30" width="56" height="62" rx="26" fill={hair} />}
+      <path d="M20 100c0-22 14-30 30-30s30 8 30 30z" fill={long ? '#6366f1' : '#334155'} />
+      <rect x="43" y="58" width="14" height="16" fill={skin} />
+      <ellipse cx="50" cy="42" rx="20" ry="23" fill={skin} />
+      <path d={long ? 'M29 40c0-18 10-24 22-24s20 8 20 24c-8-4-14-12-16-16-4 8-14 14-26 16z' : 'M30 38c-2-18 10-24 21-24s20 6 19 24c-4-6-8-9-12-10-8 4-20 4-28 10z'} fill={hair} />
+      <circle cx="42" cy="44" r="2.2" fill="#1e293b" /><circle cx="58" cy="44" r="2.2" fill="#1e293b" />
+      <ellipse cx="50" cy="55" rx="5" ry="2.5" fill="#9f1239" className={speaking ? 'talk' : ''} style={{ transformOrigin: '50px 55px' }} />
+    </svg>
+  )
+}
+
+function Tile({ name, speaking, muted, tone, face }: { name: string; speaking: boolean; muted?: boolean; tone: string; face: React.ReactNode }) {
+  return (
+    <div className={`relative flex h-32 items-end justify-center overflow-hidden rounded-lg bg-gradient-to-br ${tone} transition ${speaking ? 'ring-2 ring-green-400' : 'ring-1 ring-white/10'}`}>
+      <span className="h-[92%]">{face}</span>
       <span className="absolute bottom-1.5 left-1.5 flex items-center gap-1.5 rounded-md bg-black/60 px-1.5 py-0.5 text-[11px] font-medium text-white">
         {muted
           ? <svg viewBox="0 0 24 24" className="size-3 text-red-400" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 12 5M19 11a7 7 0 0 1-.6 2.8M12 18v3M3 3l18 18" /></svg>
           : speaking
-          ? <span className="flex h-2.5 items-end gap-px">{[0, 1, 2].map(n => <i key={n} className="bar w-0.5 rounded-full bg-green" style={{ animationDelay: `${n * 0.15}s` }} />)}</span>
+          ? <span className="flex h-2.5 items-end gap-px">{[0, 1, 2].map(n => <i key={n} className="bar w-0.5 rounded-full bg-green-400" style={{ animationDelay: `${n * 0.15}s` }} />)}</span>
           : <i className="size-1.5 rounded-full bg-white/40" />}
         {name}
       </span>
@@ -82,42 +106,48 @@ function Tile({ name, speaking, muted, tone, children }: { name: string; speakin
   )
 }
 
-// Private side panel of the hero meeting window: what Roofle has noticed so far.
-function Panel({ k, seen }: { k: string; seen: number }) {
-  const speaker = CAPTIONS[k][0] // 'Roofle' lights no tile: it is not on the call
-  const avatar = 'grid size-11 place-items-center rounded-full text-base font-bold text-slate-950'
-  const reached = ORDER.slice(0, seen + 1)
+function Call({ i }: { i: number }) {
+  const k = ORDER[i], text = CAPTIONS[k][1], at = text.indexOf(KEY[k])
+  const notes = ORDER.slice(Math.max(0, i - 2), i + 1)
+  const delay = { animationDelay: `${LAG}s` }
   return (
-    <aside aria-hidden="true" className="h-full space-y-5 overflow-y-auto border-t border-line bg-surface p-4 lg:border-l lg:border-t-0">
-      <div>
-        <p className="mb-2 text-xs font-medium text-faint">On the call · 2</p>
+    <div aria-hidden="true" className="md:grid md:grid-cols-2">
+      <div className="bg-zinc-900 p-3">
         <div className="grid grid-cols-2 gap-2">
-          <Tile name="You" muted tone="from-indigo-900 to-slate-800" speaking={false}><span className={`${avatar} bg-brand`}>Y</span></Tile>
-          <Tile name="Maya" tone="from-cyan-900 to-slate-800" speaking={speaker === 'Maya'}><span className={`${avatar} bg-insight`}>M</span></Tile>
+          <Tile name="You" muted tone="from-indigo-900 to-slate-800" speaking={false} face={<Face skin="#e8b98f" hair="#1f2937" speaking={false} />} />
+          <Tile name="Maya" tone="from-cyan-900 to-slate-800" speaking face={<Face skin="#f1c9a5" hair="#7c2d12" long speaking />} />
         </div>
-      </div>
-      <div className="rounded-xl border border-dashed border-insight/70 p-3">
-        <p className="flex items-center justify-between text-xs font-medium text-insight">
-          <span>🔒 Roofle · only you see this</span><span className="pulse-rec size-1.5 rounded-full bg-insight" />
+        <p key={k} className="fade-up mt-3 min-h-14 text-center text-sm leading-relaxed text-white/90">
+          {text.slice(0, at)}
+          <span className="hl cap font-semibold text-slate-900" style={{ '--d': '.9s' } as React.CSSProperties}>{KEY[k]}</span>
+          {text.slice(at + KEY[k].length)}
         </p>
-        <p className="mb-2 mt-4 text-xs font-medium text-faint">Suggested question</p>
-        <div key={k} className="fade-up rounded-lg border border-insight bg-insight-soft/60 p-3">
-          <p className="text-[15px] font-medium text-ink">{INTEL[k].q}</p>
-          <p className="mt-2 flex items-center justify-between text-xs">
-            <span className="font-semibold text-insight">Source ›</span>
-            <span className={`rounded-full px-2 py-0.5 font-semibold ${STATUS_STYLE[INTEL[k].status]}`}>{INTEL[k].status}</span>
-          </p>
-        </div>
-        <p className="mb-2 mt-4 text-xs font-medium text-faint">Live notes</p>
-        <ul className="space-y-2 text-sm">
-          {reached.map((r, n) => (
-            <li key={r} className={`fade-up flex gap-2 ${n === seen ? 'text-ink' : 'text-muted'}`}>
-              <span className={n === seen ? 'text-brand' : 'text-faint'}>•</span>{INTEL[r].note}
+      </div>
+      <div className="space-y-3 bg-surface p-4 md:p-5">
+        <p className="flex items-center justify-between text-xs font-medium text-insight">
+          <span>🔒 Live notes · only you see this</span><span className="pulse-rec size-1.5 rounded-full bg-insight" />
+        </p>
+        <ul className="min-h-[4.5rem] space-y-1.5 text-sm">
+          {notes.map(r => (
+            <li key={r} style={r === k ? delay : undefined} className={`fade-up flex gap-2 ${r === k ? 'text-ink' : 'text-muted'}`}>
+              <span className={r === k ? 'text-brand' : 'text-faint'}>•</span>{INTEL[r].note}
             </li>
           ))}
         </ul>
+        <div className="min-h-24">
+          <div key={k} style={delay} className="fade-up rounded-xl bg-zinc-900 p-3 text-white shadow-lg">
+            <p className="flex items-center justify-between text-[11px] font-medium text-white/60">
+              <span className="flex items-center gap-1.5"><Logo size={14} />Roofle · Suggested question</span><span>now</span>
+            </p>
+            <p className="mt-1.5 text-[15px] font-medium">{INTEL[k].q}</p>
+            <p className="mt-2 flex items-center justify-between text-xs">
+              <span className="font-semibold text-cyan-300">Source ›</span>
+              <span className={`rounded-full px-2 py-0.5 font-semibold ${STATUS_STYLE[INTEL[k].status]}`}>{INTEL[k].status}</span>
+            </p>
+          </div>
+        </div>
       </div>
-    </aside>
+    </div>
   )
 }
 
@@ -133,7 +163,7 @@ function Toolbar() {
 }
 
 function Nav() {
-  const links = [['Features', '/#features'], ['Review', '/#review'], ['Privacy', '/#privacy'], ['FAQ', '/#faq']]
+  const links = [['Features', '/#features'], ['Review', '/#review'], ['FAQ', '/#faq']]
   return (
     <header className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur">
       <a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="block bg-brand-strong px-4 py-1.5 text-center text-xs font-medium text-white dark:bg-brand dark:text-slate-950">
@@ -251,65 +281,36 @@ function Hero() {
   useEffect(() => {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setI(ORDER.length - 1); return }
     if (paused) return
-    const id = setInterval(() => setI(x => (x + 1) % ORDER.length), 3500)
+    const id = setInterval(() => setI(x => (x + 1) % ORDER.length), 5000)
     return () => clearInterval(id)
   }, [paused])
-  const key = ORDER[i]
-  const [who, text] = CAPTIONS[key]
   return (
     <section id="top" className="relative overflow-hidden">
-      <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-16 sm:px-6 sm:pt-24">
-        <div className="mx-auto max-w-3xl text-center">
-          <p style={{ animationDelay: "0s" }} className="fade-up mb-6 inline-flex items-center gap-2 font-mono text-xs tracking-widest text-brand-strong dark:text-brand">
-            <span className="pulse-rec size-1.5 rounded-full bg-record" />00:00 · LISTEN · NOTE · COACH
-          </p>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] bg-[radial-gradient(60%_60%_at_50%_0%,var(--color-brand-tint),transparent)]" />
+      <div className="relative mx-auto max-w-6xl px-4 pb-24 pt-16 sm:px-6 sm:pt-24">
+        <div className="mx-auto max-w-4xl text-center">
           <h1 style={{ animationDelay: ".15s" }} className="fade-up text-balance text-4xl font-medium leading-[1.1] tracking-tight sm:text-6xl">
-            Tired or out of ideas?{' '}
-            <em className="text-brand-strong dark:text-brand">Roofle tells you what to ask, live.</em>
+            Tired or out of ideas?
+            <em className="block text-brand-strong dark:text-brand">Roofle tells you what to ask, live.</em>
           </h1>
           <p style={{ animationDelay: ".3s" }} className="fade-up mx-auto mt-6 max-w-2xl text-balance text-lg leading-relaxed text-muted sm:text-xl">
             A meeting copilot. It <b className="hl font-semibold text-ink" style={{ '--d': '.6s' } as React.CSSProperties}>listens</b> on your device, <b className="hl font-semibold text-ink" style={{ '--d': '1.1s' } as React.CSSProperties}>writes your notes</b>, and <b className="hl font-semibold text-ink" style={{ '--d': '1.6s' } as React.CSSProperties}>reviews how you did</b>.
           </p>
           <div style={{ animationDelay: ".5s" }} className="fade-up mt-8 flex flex-wrap justify-center gap-3">
             <Button href={WAITLIST_HREF}>Join the waitlist</Button>
-            <Button href="#features" variant="ghost">See it in action</Button>
+            <Button href="#intro" variant="ghost">▶ Watch the intro</Button>
           </div>
           <p style={{ animationDelay: ".7s" }} className="fade-up mt-4 text-sm text-faint">No bots. Private. Runs on your device. Works with any meeting app.</p>
         </div>
         {/* Animated product mock, kept for reference:
             <div className="mx-auto mt-14 max-w-4xl"><AppMock /></div> */}
-        <div className="mx-auto mt-14 max-w-5xl">
+        <div className="mx-auto mt-16 max-w-4xl">
           <div className="meeting overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl shadow-indigo-950/20" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
             <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 font-mono text-xs text-muted">
-              <span className="flex items-center gap-3"><span aria-hidden="true" className="hidden gap-1.5 sm:flex"><i className="size-2.5 rounded-full bg-red-400" /><i className="size-2.5 rounded-full bg-amber-400" /><i className="size-2.5 rounded-full bg-green-400" /></span>Maya is sharing their screen</span>
-              <a href={`https://youtu.be/${DEMO_VIDEO_ID}`} target="_blank" rel="noopener noreferrer" className="hover:text-ink">Shared link: Roofle demo ↗</a>
+              <span className="flex items-center gap-3"><span aria-hidden="true" className="hidden gap-1.5 sm:flex"><i className="size-2.5 rounded-full bg-red-400" /><i className="size-2.5 rounded-full bg-amber-400" /><i className="size-2.5 rounded-full bg-green-400" /></span>Call with Maya · Roofle is listening</span>
+              <span>00:{String(12 + i * 5).padStart(2, '0')}</span>
             </div>
-            <div className="grid lg:grid-cols-[1fr_20rem]">
-              <div>
-                <iframe
-                  src={`https://www.youtube-nocookie.com/embed/${DEMO_VIDEO_ID}`}
-                  title="Roofle demo video"
-                  className="aspect-video w-full"
-                  loading="lazy"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-                <div aria-hidden="true" className="flex min-h-14 items-center justify-between gap-4 border-t border-line px-4 py-2.5 text-sm">
-                <p>
-                  <b key={who} className={`fade-up mr-2 font-mono text-xs uppercase tracking-wider ${who === 'You' ? 'text-brand-strong dark:text-brand' : who === 'Roofle' ? 'text-insight' : 'text-muted'}`}>{who === 'Roofle' ? 'Roofle · only you see this' : who}</b>
-                  <span className="text-ink">{text}</span>
-                </p>
-                <span className="flex shrink-0 gap-1.5">
-                  {ORDER.map((o, n) => (
-                    <button key={o} type="button" tabIndex={-1} onClick={() => setI(n)} className={`size-2 rounded-full transition ${n === i ? 'bg-brand' : 'bg-line hover:bg-faint'}`} />
-                  ))}
-                </span>
-                </div>
-              </div>
-              <div className="relative min-h-80">
-                <div className="absolute inset-0"><Panel k={key} seen={i} /></div>
-              </div>
-            </div>
+            <Call i={i} />
           </div>
         </div>
       </div>
@@ -342,6 +343,21 @@ function Usps() {
         </div>
       </div>
     </section>
+  )
+}
+
+function Intro() {
+  return (
+    <Section id="intro" eyebrow="Meet Roofle" title="New here? See what Roofle does." tint>
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${INTRO_VIDEO_ID}`}
+        title="Roofle introduction"
+        className="mx-auto aspect-video w-full max-w-4xl rounded-2xl border border-line shadow-2xl shadow-brand/10"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    </Section>
   )
 }
 
@@ -559,17 +575,6 @@ function Review() {
   )
 }
 
-function Privacy() {
-  return (
-    <Section id="privacy" eyebrow="00:41 · Privacy (off the record)" title="Built to run locally." tint>
-      <div className="max-w-2xl space-y-4 text-lg text-muted">
-        <p>Speech recognition and storage run on your device. Notes, suggested questions, and reviews use an LLM through an API key you provide in Settings.</p>
-        <p className="font-semibold text-ink">Your audio and transcripts stay on your machine.</p>
-      </div>
-    </Section>
-  )
-}
-
 function UseCases() {
   const items = [
     ['09:00', 'Client and partner conversations', 'Keep every conversation organised without a note-taker joining the call.'],
@@ -774,10 +779,10 @@ export default function App() {
       <main>
         {Page ? <Page /> : <>
         <Hero />
+        <Intro />
         <Usps />
         <Features />
         <Review />
-        <Privacy />
         <UseCases />
         <FAQ />
         <FinalCTA />

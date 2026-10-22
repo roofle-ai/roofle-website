@@ -100,6 +100,8 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); 
 .fade-up { animation: fade-up .5s ease both; }
 @keyframes bar { 0%,100% { height: 25%; } 50% { height: 100%; } }
 .bar { height: 25%; animation: bar .6s ease-in-out infinite; }
+@keyframes talk { 0%,100% { transform: scaleY(.5); } 50% { transform: scaleY(1.8); } }
+.talk { animation: talk .45s ease-in-out infinite; }
 @keyframes pulse-rec { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
 .pulse-rec { animation: pulse-rec 1.4s ease-in-out infinite; }
 @keyframes shine { to { background-position: 200% 0; } }
@@ -115,8 +117,12 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); 
   border-radius: .25rem; padding: 0 .2em; margin: 0 -.1em;
   animation: hl .7s ease-out forwards; animation-delay: var(--d, 0s);
 }
+/* .meeting rescopes --brand-tint, but utilities resolve at :root, so the highlight must use the theme token. */
+.meeting .hl { background-image: linear-gradient(var(--color-brand-tint), var(--color-brand-tint)); }
+/* Captions sit on the always-dark call area, so their marker stays light in both themes. */
+.meeting .hl.cap { background-image: linear-gradient(#c7d2fe, #c7d2fe); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .fade-up, .pulse-rec, .shine, .reveal, .bar { animation: none; }
+  .fade-up, .pulse-rec, .shine, .reveal, .bar, .talk { animation: none; }
   .hl { animation: none; background-size: 100% 100%; }
 }
