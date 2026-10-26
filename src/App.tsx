@@ -173,7 +173,7 @@ function UseCasesMenu() {
 
 function Nav() {
   return (
-    <header className="absolute inset-x-0 top-0 z-30">
+    <header className="fixed inset-x-0 top-0 z-30 bg-bg/80 backdrop-blur">
       <div className="flex h-16 w-full items-center justify-between px-4 sm:px-8 lg:px-16">
         <div className="flex items-center gap-8">
           <a href="/" className="flex items-center gap-2 text-lg font-bold"><Logo /><span className="font-serif text-xl font-semibold">Roofle</span></a>
@@ -658,6 +658,36 @@ function Privacy() {
   )
 }
 
+const faqs: [string, string][] = [
+  ['What is Roofle?', 'A Mac app that transcribes your meetings live, takes notes, suggests questions and reviews the call afterwards.'],
+  ['Does my audio leave my Mac?', 'No. Speech to text runs locally. Only the text you choose to send goes to the LLM you pick, and that can be a local one.'],
+  ['Which meeting tools does it work with?', 'It captures your mic and system audio, so it works with any call app on your Mac.'],
+  ['Do I need to tell people I am transcribing?', 'Yes. Consent rules vary by country and company, so let participants know.'],
+  ['How do I get access?', 'Join the waitlist and we will let you know when your spot opens.'],
+]
+
+function FAQ() {
+  return (
+    <Section id="faq" eyebrow="FAQ" title="Questions, answered.">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+      }).replace(/</g, '\\u003c') }} />
+      <div className="max-w-3xl divide-y divide-line border-y border-line">
+        {faqs.map(([q, a]) => (
+          <details key={q} className="group py-4">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
+              {q}<span className="text-faint transition group-open:rotate-45" aria-hidden="true">+</span>
+            </summary>
+            <p className="mt-2 text-muted">{a}</p>
+          </details>
+        ))}
+      </div>
+    </Section>
+  )
+}
+
 function FinalCTA() {
   return (
     <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
@@ -789,7 +819,7 @@ export default function App() {
     <>
       <Nav />
       <main>
-        {Page ? <Page /> : ucSlug ? <UseCasePage slug={ucSlug} /> : <><Hero /><PersonaShowcase /><HowItWorks /><Roles /><Privacy /><FinalCTA /></>}
+        {Page ? <Page /> : ucSlug ? <UseCasePage slug={ucSlug} /> : <><Hero /><PersonaShowcase /><HowItWorks /><Roles /><Privacy /><FAQ /><FinalCTA /></>}
       </main>
       <Footer />
     </>
