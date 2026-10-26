@@ -1,34 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
+import { USE_CASES, bySlug } from './use-cases';
 
 // Pre-production traction site: no install or download surface, only a waitlist (Google Form).
 const WAITLIST_HREF = 'https://forms.gle/RbKUuNMHeTYw9ifz7'
-const INTRO_VIDEO_ID = 'yOLk_GIRneE' // TODO: replace with the real Roofle intro video ID
 
 // TODO: fill these in before sharing the About page widely; they render only when set.
 const BUILDER: { name: string; note: string } | null = null
-const CONTACT_EMAIL = 'support@roofle.com'
+const CONTACT_EMAIL = 'support@roofle.app'
 
 function Logo({ size = 28 }: { size?: number }) {
   return <img src="/favicon.svg" width={size} height={size} alt="" className="rounded-lg" />
-}
-
-function ThemeToggle() {
-  const [dark, setDark] = useState(() => document.documentElement.classList.contains('dark'))
-  const toggle = () => {
-    const next = !dark
-    setDark(next)
-    document.documentElement.classList.toggle('dark', next)
-    try { localStorage.setItem('theme', next ? 'dark' : 'light') } catch { /* ignore */ }
-  }
-  return (
-    <button
-      onClick={toggle}
-      aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
-      className="grid h-9 w-9 place-items-center rounded-full border border-line text-muted transition hover:text-ink"
-    >
-      {dark ? '☀' : '☾'}
-    </button>
-  )
 }
 
 function Button({ href, children, variant = 'primary' }: { href: string; children: React.ReactNode; variant?: 'primary' | 'ghost' }) {
@@ -111,7 +92,7 @@ function Call({ i }: { i: number }) {
   const notes = ORDER.slice(Math.max(0, i - 2), i + 1)
   const delay = { animationDelay: `${LAG}s` }
   return (
-    <div aria-hidden="true" className="md:grid md:grid-cols-2">
+    <div aria-hidden="true">
       <div className="bg-zinc-900 p-3">
         <div className="grid grid-cols-2 gap-2">
           <Tile name="You" muted tone="from-indigo-900 to-slate-800" speaking={false} face={<Face skin="#e8b98f" hair="#1f2937" speaking={false} />} />
@@ -151,33 +132,58 @@ function Call({ i }: { i: number }) {
   )
 }
 
-function Toolbar() {
-  const btn = 'flex h-11 min-w-16 flex-col items-center justify-center gap-0.5 rounded-md px-3 text-[11px] text-zinc-300'
+function UseCasesMenu() {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (!open) return
+    const close = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false) }
+    document.addEventListener('mousedown', close)
+    return () => document.removeEventListener('mousedown', close)
+  }, [open])
   return (
-    <div className="fixed inset-x-0 bottom-0 z-30 flex h-14 items-center justify-center gap-1 bg-zinc-900 px-2 text-white">
-      <span aria-hidden="true" className={`${btn} hidden sm:flex`}><span className="text-base leading-none">◉</span>Mute</span>
-      <span aria-hidden="true" className={`${btn} hidden sm:flex`}><span className="text-base leading-none">▣</span>Video</span>
-      <a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="ml-3 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-500">Join waitlist</a>
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        aria-haspopup="true"
+        aria-expanded={open}
+        className="flex items-center gap-1 text-sm font-bold text-ink/80 transition hover:text-ink"
+      >
+        Use cases
+        <svg viewBox="0 0 24 24" className={`size-4 transition ${open ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+      </button>
+      {open && (
+        <div className="absolute left-0 top-full mt-3 w-[22rem] rounded-2xl border border-line bg-bg p-2 shadow-2xl shadow-black/10">
+          <p className="px-3 pb-1 pt-2 font-mono text-[11px] uppercase tracking-widest text-faint">Built for your role</p>
+          {USE_CASES.map(u => (
+            <a key={u.slug} href={`/use-cases/${u.slug}`} className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-surface-2">
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-brand-tint text-sm font-bold text-brand-strong dark:text-brand">{u.role[0]}</span>
+              <span>
+                <span className="block text-sm font-semibold text-ink">{u.role}</span>
+                <span className="block text-xs text-muted">{u.short}</span>
+              </span>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
 
 function Nav() {
-  const links = [['Features', '/#features'], ['Review', '/#review'], ['FAQ', '/#faq']]
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur">
-      <a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="block bg-brand-strong px-4 py-1.5 text-center text-xs font-medium text-white dark:bg-brand dark:text-slate-950">
-        🚀 Launching soon — join the waitlist for early access →
-      </a>
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <a href="/" className="flex items-center gap-2 text-lg font-bold"><Logo /><span className="font-serif text-xl font-semibold">Roofle</span></a>
-        <nav className="hidden items-center gap-7 text-sm text-muted md:flex">
-          {links.map(([l, h]) => <a key={h} href={h} className="hover:text-ink">{l}</a>)}
-        </nav>
-        <div className="flex items-center gap-3">
-          <ThemeToggle />
-          <Button href={WAITLIST_HREF}>Join waitlist</Button>
+    <header className="absolute inset-x-0 top-0 z-30">
+      <div className="flex h-16 w-full items-center justify-between px-4 sm:px-8 lg:px-16">
+        <div className="flex items-center gap-8">
+          <a href="/" className="flex items-center gap-2 text-lg font-bold"><Logo /><span className="font-serif text-xl font-semibold">Roofle</span></a>
+          <nav className="flex items-center gap-6">
+            <UseCasesMenu />
+            <a href="/features" className="text-sm font-bold text-ink/80 transition hover:text-ink">Features</a>
+            <a href="/privacy" className="text-sm font-bold text-ink/80 transition hover:text-ink">Privacy</a>
+          </nav>
         </div>
+        <Button href={WAITLIST_HREF}>Join waitlist</Button>
       </div>
     </header>
   )
@@ -274,6 +280,26 @@ function AppMock() {
   )
 }
 
+// Hero backdrop: a soft glow and a field of shaded dots laid on a tilted floor, receding to the horizon.
+function HeroBackdrop() {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(55% 60% at 88% 8%, var(--brand-tint), transparent)' }} />
+      <div className="absolute inset-x-0 bottom-0 h-[55%] [perspective:640px]">
+        <div
+          className="absolute -left-1/2 bottom-0 h-[170%] w-[200%] opacity-[0.18] [mask-image:linear-gradient(to_top,black_10%,transparent_80%)]"
+          style={{
+            transform: 'rotateX(58deg)',
+            transformOrigin: '50% 100%',
+            backgroundImage: 'radial-gradient(circle at 35% 35%, var(--faint), var(--muted) 1.6px, transparent 2.3px)',
+            backgroundSize: '40px 40px',
+          }}
+        />
+      </div>
+    </div>
+  )
+}
+
 function Hero() {
   // Loops through the meeting so the panel shows Roofle working live; rests on the last beat when motion is reduced.
   const [i, setI] = useState(0)
@@ -285,26 +311,23 @@ function Hero() {
     return () => clearInterval(id)
   }, [paused])
   return (
-    <section id="top" className="relative overflow-hidden">
-      <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-[40rem] bg-[radial-gradient(60%_60%_at_50%_0%,var(--color-brand-tint),transparent)]" />
-      <div className="relative mx-auto max-w-6xl px-4 pb-24 pt-16 sm:px-6 sm:pt-24">
-        <div className="mx-auto max-w-4xl text-center">
-          <h1 style={{ animationDelay: ".15s" }} className="fade-up text-balance text-4xl font-medium leading-[1.1] tracking-tight sm:text-6xl">
-            Tired or out of ideas?
-            <em className="block text-brand-strong dark:text-brand">Roofle tells you what to ask, live.</em>
+    <section id="top" className="relative flex min-h-[85vh] items-center overflow-hidden">
+      <HeroBackdrop />
+      <div className="relative w-full px-4 py-12 sm:px-8 lg:px-16">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
+        <div>
+          <h1 style={{ animationDelay: ".15s", fontFamily: "var(--font-display)" }} className="fade-up text-balance text-5xl font-semibold leading-[1.05] tracking-[-0.03em] sm:text-6xl xl:text-7xl">
+            The meeting copilot <em className="not-italic text-brand-strong dark:text-brand">built for your role</em>
           </h1>
-          <p style={{ animationDelay: ".3s" }} className="fade-up mx-auto mt-6 max-w-2xl text-balance text-lg leading-relaxed text-muted sm:text-xl">
-            A meeting copilot. It <b className="hl font-semibold text-ink" style={{ '--d': '.6s' } as React.CSSProperties}>listens</b> on your device, <b className="hl font-semibold text-ink" style={{ '--d': '1.1s' } as React.CSSProperties}>writes your notes</b>, and <b className="hl font-semibold text-ink" style={{ '--d': '1.6s' } as React.CSSProperties}>reviews how you did</b>.
+          <p style={{ animationDelay: ".3s" }} className="fade-up mt-7 max-w-xl text-lg leading-relaxed text-ink/80 sm:text-xl sm:leading-relaxed">
+            Pick who you are in the room. Roofle works quietly in the background while you stay in the conversation.
           </p>
-          <div style={{ animationDelay: ".5s" }} className="fade-up mt-8 flex flex-wrap justify-center gap-3">
+          <div style={{ animationDelay: ".5s" }} className="fade-up mt-10 flex flex-wrap gap-3">
             <Button href={WAITLIST_HREF}>Join the waitlist</Button>
-            <Button href="#intro" variant="ghost">▶ Watch the intro</Button>
+            <Button href="/features" variant="ghost">Explore features →</Button>
           </div>
-          <p style={{ animationDelay: ".7s" }} className="fade-up mt-4 text-sm text-faint">No bots. Private. Runs on your device. Works with any meeting app.</p>
         </div>
-        {/* Animated product mock, kept for reference:
-            <div className="mx-auto mt-14 max-w-4xl"><AppMock /></div> */}
-        <div className="mx-auto mt-16 max-w-4xl">
+        <div>
           <div className="meeting overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl shadow-indigo-950/20" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
             <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 font-mono text-xs text-muted">
               <span className="flex items-center gap-3"><span aria-hidden="true" className="hidden gap-1.5 sm:flex"><i className="size-2.5 rounded-full bg-red-400" /><i className="size-2.5 rounded-full bg-amber-400" /><i className="size-2.5 rounded-full bg-green-400" /></span>Call with Maya · Roofle is listening</span>
@@ -313,51 +336,9 @@ function Hero() {
             <Call i={i} />
           </div>
         </div>
-      </div>
-    </section>
-  )
-}
-
-function Usps() {
-  const rest = [
-    ['One-click action items', 'Finish the call, click once, and your follow-up actions are ready. No retyping, no chasing.'],
-    ['Notes that write themselves', 'One short document, rewritten as the conversation moves: summary, key points, decisions and action items.'],
-  ]
-  return (
-    <section>
-      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <p className="mb-3 font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand">What makes Roofle different</p>
-        <div className="rounded-2xl bg-brand-tint p-6 sm:p-10">
-          <span className="font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand">01 · The main thing</span>
-          <h2 className="mt-3 max-w-2xl font-serif text-3xl font-medium sm:text-5xl">Roofle tells you what to ask next.</h2>
-          <p className="mt-4 max-w-2xl text-lg text-muted">It spots gaps and vague points while people are still talking, then suggests the follow-up question worth asking. When it gets answered, Roofle marks it resolved and shows you the line it came from.</p>
-        </div>
-        <div className="mt-10 grid gap-x-12 gap-y-8 sm:grid-cols-2">
-          {rest.map(([t, d], n) => (
-            <div key={t} className="reveal border-t border-ink pt-4">
-              <span className="font-mono text-xs text-faint">{String(n + 2).padStart(2, '0')}</span>
-              <h3 className="mt-2 font-serif text-2xl">{t}</h3>
-              <p className="mt-2 text-muted">{d}</p>
-            </div>
-          ))}
         </div>
       </div>
     </section>
-  )
-}
-
-function Intro() {
-  return (
-    <Section id="intro" eyebrow="Meet Roofle" title="New here? See what Roofle does." tint>
-      <iframe
-        src={`https://www.youtube-nocookie.com/embed/${INTRO_VIDEO_ID}`}
-        title="Roofle introduction"
-        className="mx-auto aspect-video w-full max-w-4xl rounded-2xl border border-line shadow-2xl shadow-brand/10"
-        loading="lazy"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
-    </Section>
   )
 }
 
@@ -373,311 +354,17 @@ function Section({ id, title, eyebrow, children, tint }: { id?: string; title: s
   )
 }
 
-// Loops 0..n-1 while playing; otherwise rests on the final frame (also when motion is reduced).
-function useTick(playing: boolean, n = 6, ms = 1000) {
-  const [t, setT] = useState(n - 1)
-  useEffect(() => {
-    if (!playing || matchMedia('(prefers-reduced-motion: reduce)').matches) { setT(n - 1); return }
-    setT(0)
-    const id = setInterval(() => setT(x => (x + 1) % n), ms)
-    return () => clearInterval(id)
-  }, [playing, n, ms])
-  return t
-}
-
-const chip = 'rounded-full px-1.5 py-px text-[10px] font-bold uppercase'
-const demos: Record<string, (t: number) => React.ReactNode> = {
-  'Live transcription': () => (
-    <img
-      src="/live-transcription.gif"
-      alt="Live transcription of a meeting"
-      className="absolute inset-0 h-full w-full object-cover"
-      loading="lazy"
-      draggable={false}
-    />
-  ),
-  'Live notes': t => (
-    <img
-      src="/live-notes.gif"
-      alt="Live transcription of a meeting"
-      className="absolute inset-0 h-full w-full object-cover"
-      loading="lazy"
-      draggable={false}
-    />
-  ),
-  'Suggested questions': () => (
-    <img
-      src="/notification.gif"
-      alt="Suggested question: who signs off on budget?"
-      className="absolute inset-0 h-full w-full object-cover"
-      loading="lazy"
-      draggable={false}
-    />
-  ),
-  'Recap on demand': t => (
-    <img
-      src="/live-recap.gif"
-      alt="Suggested question: who signs off on budget?"
-      className="absolute inset-0 h-full w-full object-cover"
-      loading="lazy"
-      draggable={false}
-    />
-  ),
-  'Key figures and dates': t => (
-    <img
-      src="/key-dates.gif"
-      alt="Suggested question: who signs off on budget?"
-      className="absolute inset-0 h-full w-full object-cover"
-      loading="lazy"
-      draggable={false}
-    />
-  ),
-  'Conversation review': t => (
-    <div className="space-y-2">
-      {[['Decisions', 82], ['Questions resolved', 74], ['Balance', 68]].map(([n, v]) => (
-        <div key={n}>
-          <div className="flex justify-between"><span>{n}</span><span>{t >= 1 ? v : '–'}</span></div>
-          <div className="mt-0.5 h-1.5 rounded-full bg-surface-2"><div className="h-full rounded-full bg-brand transition-[width] duration-1000" style={{ width: t >= 1 ? `${v}%` : 0 }} /></div>
-        </div>
-      ))}
-    </div>
-  ),
-  'Quick follow-up actions': t => (
-    <img
-      src="/one-click-follow-up.gif"
-      alt="One click follow actions"
-      className="absolute inset-0 h-full w-full object-cover"
-      loading="lazy"
-      draggable={false}
-    />
-  ),
-  'Menu bar and shortcuts': t => (
-    <div className="space-y-2">
-      {[['⌘⇧S', 'Start recording', t < 3], ['⌘⇧T', 'Stop recording', t >= 3]].map(([k, l, on]) => (
-        <p key={String(k)} className="flex items-center gap-2">
-          <kbd className={`rounded border px-1.5 py-0.5 font-mono transition ${on ? 'border-brand bg-brand-tint text-brand-strong dark:text-brand' : 'border-line'}`}>{k}</kbd>{l}
-        </p>
-      ))}
-    </div>
-  ),
-  'On-device': t => (
-    <ul className="space-y-1.5">
-      {['Speech recognition', 'Transcript storage'].slice(0, Math.min(t, 2)).map(x => (
-        <li key={x} className="fade-up flex justify-between"><span>{x}</span><span className="font-semibold text-green">On your device ✓</span></li>
-      ))}
-    </ul>
-  ),
-}
 const features: [string, string][] = [
   ['Suggested questions', 'Spots gaps and vague points worth asking about. A notification suggests the question and jumps to the exact line it came from.'],
   ['Live transcription', 'Listens to your mic and the system audio at once. Every line is tagged by source, so you know who said what.'],
+  ['Live notes', 'One short notes document, rewritten as the conversation moves: summary, key points, decisions and action items.'],
   ['Recap on demand', 'Zoned out for a moment? Get a recap of the last 30 seconds in one click.'],
   ['Key figures and dates', 'Pulls out the numbers, dates and names that matter, so nothing important is buried in the transcript.'],
-  ['Live notes', 'One short notes document, rewritten as the conversation moves: summary, key points, decisions and action items.'],
   ['Quick follow-up actions', 'One click turns every finished session into follow-up action items.'],
   ['Conversation review', 'An offline self-assessment once the session ends: a focus area and plain-language explanations. It says so when the transcript is too thin to judge.'],
   ['Menu bar and shortcuts', 'Lives in the menu bar with no Dock icon. Start and stop with a shortcut; nothing records until you do.'],
   ['On-device', 'Speech recognition and storage run locally. You bring your own LLM key for notes, questions and reviews.'],
 ]
-
-const groups: [string, number][] = [['During the call', 0], ['After the call', 5], ['Always', 7]]
-
-// Agenda list on the left; the selected item is "shared" on the stage (inline on small screens). Click works on touch.
-function Features() {
-  const [sel, setSel] = useState(0)
-  const t = useTick(true)
-  const title = features[sel][0]
-  return (
-    <Section id="features" eyebrow="00:12 · Features" title="Everything you need, nothing you have to type." tint>
-      <div className="grid items-start gap-10 lg:grid-cols-[1fr_1.1fr]">
-        <div className="space-y-8">
-          {groups.map(([g, from], gi) => (
-            <div key={g}>
-              <p className="mb-2 font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand">{g}</p>
-              <ul className="divide-y divide-line border-y border-line">
-                {features.slice(from, groups[gi + 1]?.[1]).map(([name, desc], j) => {
-                  const n = from + j
-                  const on = n === sel
-                  return (
-                    <li key={name}>
-                      <button onClick={() => setSel(n)} onMouseEnter={() => setSel(n)} aria-expanded={on} className="block w-full py-3 text-left">
-                        <span className="flex items-baseline gap-4">
-                          <span className={`font-mono text-xs ${on ? 'text-brand-strong dark:text-brand' : 'text-faint'}`}>{String(n + 1).padStart(2, '0')}</span>
-                          <span className={`font-serif text-xl ${on ? 'text-ink' : 'text-muted'}`}>{name}</span>
-                        </span>
-                        {on && <span className="fade-up mt-2 block pl-9 text-sm text-muted">{desc}</span>}
-                      </button>
-                      {on && <div aria-hidden="true" className="meeting relative mb-4 aspect-[8/5] overflow-hidden rounded-xl border border-line bg-brand-tint p-3 text-xs text-muted lg:hidden">{demos[name](t)}</div>}
-                    </li>
-                  )
-                })}
-              </ul>
-            </div>
-          ))}
-        </div>
-        <div aria-hidden="true" className="meeting hidden overflow-hidden rounded-2xl border border-line bg-bg lg:sticky lg:top-24 lg:block">
-          <p className="border-b border-line px-4 py-2.5 font-mono text-xs text-muted">Now showing · {title}</p>
-          <div className="relative aspect-[8/5] bg-brand-tint p-3 text-xs text-muted">{demos[title](t)}</div>
-        </div>
-      </div>
-    </Section>
-  )
-}
-
-function Review() {
-  const [run, setRun] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setRun(true); io.disconnect() } }, { threshold: 0.4 })
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
-  const replay = () => { setRun(false); setTimeout(() => setRun(true), 300) }
-  return (
-    <Section id="review" eyebrow="00:34 · Review" title="See how the call really went.">
-      <div className="grid items-start gap-10 lg:grid-cols-2">
-        <div className="space-y-5 text-muted">
-          <p className="text-lg">When the session ends, Roofle runs a self-assessment — an honest read on how it went, with a focus area and plain-language explanations.</p>
-          <p className="font-semibold text-ink">Watch it score a sample session. It runs the moment you scroll here.</p>
-          <p>When the transcript is too thin to judge fairly, Roofle says so instead of faking confidence.</p>
-        </div>
-        <div ref={ref} className="rounded-2xl border border-line bg-surface p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wider text-faint">Session review</p>
-              <p className="mt-1 text-4xl font-extrabold">{run ? total : '–'}<span className="text-base font-medium text-faint"> / 100</span></p>
-            </div>
-            <button onClick={replay} className="rounded-full bg-brand-strong px-4 py-2 text-sm font-semibold text-white dark:bg-brand dark:text-slate-950">
-              Replay
-            </button>
-          </div>
-          <ul className="mt-6 space-y-4">
-            {metrics.map(([name, v]) => (
-              <li key={name}>
-                <div className="mb-1 flex justify-between text-sm"><span>{name}</span><span className="text-muted">{run ? v : '–'}</span></div>
-                <div className="h-2 overflow-hidden rounded-full bg-surface-2">
-                  <div className="h-full rounded-full bg-brand transition-[width] duration-1000 ease-out" style={{ width: run ? `${v}%` : '0%' }} />
-                </div>
-              </li>
-            ))}
-          </ul>
-          {run && (
-            <p key="focus" className="fade-up mt-5 rounded-lg bg-brand-tint px-3 py-2 text-sm text-muted">
-              <b className="text-brand-strong dark:text-brand">Focus area:</b> Ask who signs off on budget earlier. It was left open until the end.
-            </p>
-          )}
-          <p className="mt-5 text-xs text-faint">Sample session shown for illustration.</p>
-        </div>
-      </div>
-    </Section>
-  )
-}
-
-function UseCases() {
-  const items = [
-    ['09:00', 'Client and partner conversations', 'Keep every conversation organised without a note-taker joining the call.'],
-    ['11:30', 'Requirements and planning sessions', 'Capture decisions, open questions, and action items while the discussion is live.'],
-    ['14:00', '1:1s and team meetings', 'Track follow-ups across standups, reviews, and check-ins, so nothing slips.'],
-    ['16:30', 'Calls and interviews', 'Review talk–listen balance and question depth after every conversation.'],
-  ]
-  return (
-    <Section eyebrow="00:48 · Today’s calendar" title="Made for people who live in conversations.">
-      <ul className="max-w-3xl space-y-3">
-        {items.map(([time, t, d]) => (
-          <li key={t} className="flex gap-4">
-            <span className="w-12 shrink-0 pt-4 font-mono text-xs text-faint">{time}</span>
-            <div className="flex-1 rounded-r-xl border-l-4 border-brand bg-brand-tint px-4 py-3">
-              <h3 className="font-semibold text-brand-strong dark:text-brand">{t}</h3>
-              <p className="mt-1 text-sm text-muted">{d}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
-    </Section>
-  )
-}
-
-function FAQ() {
-  const items = [
-    ['What is Roofle?', 'A macOS menu-bar app that listens to your meetings on your device — transcribing them live, writing notes, suggesting questions worth asking, and reviewing the session when it ends.'],
-    ['Does Roofle join my calls as a bot?', 'No. It runs as a menu-bar app on your Mac, so there is no bot to explain to attendees.'],
-    ['Does my audio leave my computer?', 'No. Speech recognition and storage run locally on your Mac. Notes, questions, and reviews use an LLM through an API key you provide in Settings.'],
-    ['How much will it cost?', 'We will share pricing before launch, and people on the waitlist get early access and founding pricing. Notes, questions, and reviews use your own LLM API key, so that usage is billed by your provider, not by Roofle.'],
-    ['What do I need to run it?', 'An Apple Silicon Mac on macOS 13 or newer.'],
-    ['When does it record?', 'Nothing is recorded until you start it. Roofle runs from the menu bar and stays out of the way until you quit.'],
-    ['What if the recording is short or one-sided?', 'Roofle tells you when it is not sure instead of faking confidence.'],
-  ]
-  return (
-    <Section id="faq" eyebrow="00:55 · Q&A" title="Questions, answered." tint>
-      <div className="max-w-2xl space-y-3">
-        {items.map(([q, a]) => (
-          <details key={q} className="group">
-            <summary className="flex cursor-pointer list-none items-center gap-3">
-              <span className="rounded-2xl rounded-bl-sm bg-surface-2 px-4 py-2.5 font-medium">
-                <span className="mr-2 font-mono text-xs uppercase tracking-wider text-muted">Maya</span>{q}
-              </span>
-              <span className="text-brand transition group-open:rotate-45">+</span>
-            </summary>
-            <p className="fade-up ml-auto mt-2 max-w-[85%] rounded-2xl rounded-br-sm bg-brand-tint px-4 py-2.5 text-muted">
-              <span className="mr-2 font-mono text-xs uppercase tracking-wider text-brand-strong dark:text-brand">You</span>{a}
-            </p>
-          </details>
-        ))}
-      </div>
-    </Section>
-  )
-}
-
-function FinalCTA() {
-  return (
-    <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-      <div className="rounded-3xl bg-ink px-6 py-16 text-center text-bg">
-        <p className="mb-4 font-mono text-xs tracking-widest text-brand-soft">01:00 · ADJOURNED</p>
-        <h2 className="font-serif text-3xl font-medium sm:text-5xl">Spend your meetings talking, not typing.</h2>
-        <a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white dark:text-slate-950 transition hover:opacity-90">Join the waitlist</a>
-      </div>
-    </section>
-  )
-}
-
-const PRIVACY_QA = [
-  ['Is Roofle GDPR compliant?', 'Roofle is designed to be GDPR compliant. Processing happens on your Mac, and you decide what, if anything, is sent to an LLM provider.'],
-  ['Where is my audio stored?', 'Only on your device. Speech recognition and storage run locally, and we never receive your recordings or transcripts.'],
-  ['What leaves my computer?', 'Only text you choose to send to the LLM provider behind the API key you add in Settings, to generate notes, questions, and reviews. That provider’s privacy terms apply.'],
-  ['Do you collect personal data?', 'No recordings, transcripts, or meeting content. Joining the waitlist shares only the details you submit there.'],
-  ['Can I delete my data?', 'Yes, at any time. It lives on your Mac, so deleting it there removes it.'],
-  ['Should I tell meeting attendees?', 'Yes. Consent rules vary by country and company, so let participants know you are transcribing.'],
-]
-
-function Footer() {
-  const ref = useRef<HTMLDialogElement>(null)
-  return (
-    <footer className="border-t border-line pb-28">
-      <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-8 text-sm text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <p className="flex items-center gap-2"><Logo size={20} /><b className="font-serif text-base text-ink">Roofle</b></p>
-        <p className="flex gap-5"><a href="/about" className="hover:text-ink">About</a><a href="/status" className="hover:text-ink">Status</a><button type="button" onClick={() => ref.current?.showModal()} className="hover:text-ink">Privacy</button><a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="hover:text-ink">Join waitlist</a><span>© 2026</span></p>
-      </div>
-      <dialog ref={ref} onClick={e => e.target === ref.current && ref.current.close()} className="m-auto w-[min(92vw,40rem)] rounded-2xl border border-line bg-bg p-0 text-ink backdrop:bg-black/50">
-        <div className="max-h-[80vh] overflow-y-auto p-6">
-          <div className="flex items-start justify-between gap-4">
-            <h2 className="text-xl font-bold">Privacy &amp; GDPR</h2>
-            <button type="button" aria-label="Close" onClick={() => ref.current?.close()} className="text-2xl leading-none text-muted hover:text-ink">×</button>
-          </div>
-          <div className="mt-4 divide-y divide-line">
-            {PRIVACY_QA.map(([q, a]) => (
-              <details key={q} className="group py-3">
-                <summary className="flex cursor-pointer list-none items-center justify-between font-semibold">{q}<span className="text-brand transition group-open:rotate-45">+</span></summary>
-                <p className="mt-2 text-muted">{a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </dialog>
-    </footer>
-  )
-}
 
 function About() {
   const points = [
@@ -763,30 +450,346 @@ function Status() {
   )
 }
 
+function UseCasePage({ slug }: { slug: string }) {
+  const u = bySlug(slug)
+  useEffect(() => { document.title = `${u?.role ?? 'Use case'} · Roofle` }, [u])
+  if (!u) return <Section title="Use case not found."><a href="/" className="text-brand-strong underline dark:text-brand">Back home</a></Section>
+  return (
+    <>
+      <section>
+        <div className="mx-auto max-w-6xl px-4 pb-16 pt-32 sm:px-6">
+          <p className="mb-4 font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand">Roofle for {u.role}</p>
+          <h1 className="max-w-3xl text-balance text-4xl font-semibold leading-[1.1] tracking-tight sm:text-6xl">{u.headline}</h1>
+          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-ink/80">{u.intro}</p>
+          <div className="mt-8"><Button href={WAITLIST_HREF}>Join the waitlist</Button></div>
+        </div>
+      </section>
+      <Section eyebrow="Where it helps" title="Moments that matter." tint>
+        <ul className="grid gap-8 sm:grid-cols-3">
+          {u.moments.map(([t, d], n) => (
+            <li key={t} className="border-t border-ink pt-4">
+              <span className="font-mono text-xs text-faint">{String(n + 1).padStart(2, '0')}</span>
+              <h3 className="mt-2 text-xl font-semibold">{t}</h3>
+              <p className="mt-2 text-muted">{d}</p>
+            </li>
+          ))}
+        </ul>
+      </Section>
+      <Section eyebrow="Suggested questions" title="What Roofle might suggest.">
+        <ul className="max-w-2xl space-y-3">
+          {u.questions.map(q => <li key={q} className="rounded-xl border border-line bg-surface px-4 py-3 text-lg">“{q}”</li>)}
+        </ul>
+        <p className="mt-4 text-sm text-faint">Examples for illustration. Real suggestions come from your conversation.</p>
+      </Section>
+      <Section eyebrow="What you get" title="Less typing, more listening." tint>
+        <ul className="grid gap-8 sm:grid-cols-3">
+          {u.outcomes.map(([t, d]) => (
+            <li key={t}>
+              <h3 className="font-semibold text-brand-strong dark:text-brand">{t}</h3>
+              <p className="mt-1 text-muted">{d}</p>
+            </li>
+          ))}
+        </ul>
+      </Section>
+    </>
+  )
+}
+
+const FEATURE_GIF: Record<string, string> = {
+  'Suggested questions': '/notification.gif',
+  'Live transcription': '/live-transcription.gif',
+  'Recap on demand': '/live-recap.gif',
+  'Key figures and dates': '/key-dates.gif',
+  'Live notes': '/live-notes.gif',
+  'Quick follow-up actions': '/one-click-follow-up.gif',
+}
+
+function Features() {
+  const shown = features.filter(([n]) => FEATURE_GIF[n])
+  const rest = features.filter(([n]) => !FEATURE_GIF[n])
+  return (
+    <>
+      <section>
+        <div className="mx-auto max-w-6xl px-4 pb-12 pt-32 sm:px-6">
+          <p className="mb-4 font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand">Features</p>
+          <h1 className="max-w-3xl text-balance text-4xl font-semibold leading-[1.1] tracking-tight sm:text-6xl">Everything you need, nothing you have to type.</h1>
+          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-ink/80">Roofle works quietly in the background, so you can stay in the conversation.</p>
+        </div>
+      </section>
+      <section>
+        <div className="mx-auto max-w-6xl space-y-20 px-4 py-12 sm:px-6">
+          {shown.map(([name, desc], n) => (
+            <div key={name} className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
+              <div className={n % 2 ? 'lg:order-2' : ''}>
+                <span className="font-mono text-xs text-faint">{String(n + 1).padStart(2, '0')}</span>
+                <h2 className="mt-2 text-3xl font-semibold tracking-tight" style={{ fontFamily: 'var(--font-sans)' }}>{name}</h2>
+                <p className="mt-3 max-w-md text-lg leading-relaxed text-muted">{desc}</p>
+              </div>
+              <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xl shadow-black/10">
+                <img src={FEATURE_GIF[name]} alt={name} loading="lazy" draggable={false} className="aspect-[8/5] w-full object-cover" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      <Section eyebrow="And more" title="Built to stay out of your way." tint>
+        <ul className="grid gap-8 sm:grid-cols-3">
+          {rest.map(([name, desc]) => (
+            <li key={name} className="rounded-2xl border border-line bg-bg p-6">
+              <h3 className="flex flex-wrap items-center gap-2 text-xl font-semibold">
+                {name}
+                {name === 'Conversation review' && <span className="rounded-full bg-amber-soft px-2 py-0.5 text-[11px] font-semibold text-amber">Coming soon</span>}
+              </h3>
+              <p className="mt-2 text-muted">{desc}</p>
+            </li>
+          ))}
+        </ul>
+      </Section>
+    </>
+  )
+}
+
+function HowItWorks() {
+  const steps = [
+    ['Pick your role', 'Tell Roofle who you are in the room, so its questions fit the conversation.'],
+    ['Start your call', 'Start with a shortcut from the menu bar. Roofle listens to your mic and the call audio, on your Mac.'],
+    ['Stay in the conversation', 'Live notes and suggested questions appear as you talk. No bot joins the call.'],
+    ['Finish with action items', 'One click after the call and your follow-ups are ready.'],
+  ]
+  return (
+    <Section eyebrow="How it works" title="Four steps, one conversation.">
+      <ol className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {steps.map(([t, d], n) => (
+          <li key={t} className="border-t border-ink pt-4">
+            <span className="font-mono text-xs text-faint">{String(n + 1).padStart(2, '0')}</span>
+            <h3 className="mt-2 text-xl font-semibold">{t}</h3>
+            <p className="mt-2 text-muted">{d}</p>
+          </li>
+        ))}
+      </ol>
+    </Section>
+  )
+}
+
+function PersonaShowcase() {
+  const [sel, setSel] = useState(0)
+  const u = USE_CASES[sel]
+  return (
+    <Section eyebrow="Personalised to you" title="One copilot. Shaped by your role." tint>
+      <p className="-mt-2 max-w-2xl text-lg text-muted">Roofle does not ask the same questions in every call. Pick your role and it changes what it listens for, what it suggests and how it reviews the conversation.</p>
+      <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Choose a role">
+        {USE_CASES.map((c, n) => (
+          <button
+            key={c.slug}
+            type="button"
+            onClick={() => setSel(n)}
+            aria-pressed={n === sel}
+            className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${n === sel ? 'border-transparent bg-brand-strong text-white dark:bg-brand dark:text-slate-950' : 'border-line bg-bg text-ink hover:bg-surface-2'}`}
+          >
+            {c.role}
+          </button>
+        ))}
+      </div>
+      <div key={u.slug} className="fade-up mt-6 grid gap-6 lg:grid-cols-2">
+        <div className="rounded-2xl border border-line bg-bg p-6">
+          <p className="font-mono text-xs uppercase tracking-widest text-faint">Roofle listens for</p>
+          <ul className="mt-4 space-y-4">
+            {u.moments.map(([t, d]) => (
+              <li key={t} className="flex gap-3">
+                <span className="mt-0.5 font-bold text-brand-strong dark:text-brand">✓</span>
+                <span><b className="font-semibold">{t}.</b> <span className="text-muted">{d}</span></span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="meeting rounded-2xl bg-zinc-900 p-6 text-white shadow-xl shadow-black/10">
+          <p className="flex items-center justify-between text-xs font-medium text-white/60">
+            <span className="flex items-center gap-1.5"><Logo size={14} />Roofle · Suggested for {u.role}</span><span>now</span>
+          </p>
+          <ul className="mt-4 space-y-3">
+            {u.questions.map((q, n) => (
+              <li key={q} className={`rounded-xl px-4 py-3 ${n === 0 ? 'bg-white/10 text-lg font-medium' : 'text-white/70'}`}>“{q}”</li>
+            ))}
+          </ul>
+          <a href={`/use-cases/${u.slug}`} className="mt-5 inline-block text-sm font-semibold text-cyan-300 hover:underline">See Roofle for {u.role} →</a>
+        </div>
+      </div>
+      <p className="mt-4 text-sm text-faint">Examples for illustration. Real suggestions come from your conversation.</p>
+    </Section>
+  )
+}
+
+function Roles() {
+  return (
+    <Section eyebrow="Built for your role" title="Whatever you do, Roofle fits the conversation." tint>
+      <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {USE_CASES.map(u => (
+          <li key={u.slug}>
+            <a href={`/use-cases/${u.slug}`} className="group block h-full rounded-2xl border border-line bg-bg p-6 transition hover:border-brand hover:shadow-lg hover:shadow-black/5">
+              <span className="grid size-10 place-items-center rounded-lg bg-brand-tint font-bold text-brand-strong dark:text-brand">{u.role[0]}</span>
+              <h3 className="mt-4 text-xl font-semibold">{u.role}</h3>
+              <p className="mt-1 text-muted">{u.short}</p>
+              <span className="mt-4 inline-block text-sm font-semibold text-brand-strong transition group-hover:translate-x-1 dark:text-brand">Learn more →</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  )
+}
+
+function Privacy() {
+  const points = [
+    ['No bots', 'Nobody extra joins your call. Roofle runs from your menu bar.'],
+    ['On your device', 'Speech recognition and transcript storage stay on your Mac.'],
+    ['Your choice of LLM', 'Use your own API key, or run a local LLM and keep everything on your Mac.'],
+  ]
+  return (
+    <Section eyebrow="Private by design" title="Your conversations stay yours.">
+      <ul className="grid gap-8 sm:grid-cols-3">
+        {points.map(([t, d]) => (
+          <li key={t}>
+            <h3 className="font-semibold text-brand-strong dark:text-brand">{t}</h3>
+            <p className="mt-1 text-muted">{d}</p>
+          </li>
+        ))}
+      </ul>
+    </Section>
+  )
+}
+
+function FinalCTA() {
+  return (
+    <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <div className="rounded-3xl bg-ink px-6 py-16 text-center text-bg">
+        <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-5xl" style={{ fontFamily: 'var(--font-sans)' }}>Spend your meetings talking, not typing.</h2>
+        <p className="mx-auto mt-4 max-w-xl text-bg/70">Join the waitlist for early access and founding pricing.</p>
+        <a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90 dark:text-slate-950">Join the waitlist</a>
+      </div>
+    </section>
+  )
+}
+
+function Footer() {
+  const col = 'space-y-2 text-sm text-muted'
+  const head = 'mb-3 font-mono text-xs uppercase tracking-widest text-faint'
+  return (
+    <footer className="border-t border-line bg-surface">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
+        <div>
+          <a href="/" className="flex items-center gap-2 text-lg font-bold"><Logo /><span className="font-serif text-xl font-semibold">Roofle</span></a>
+          <p className="mt-3 max-w-xs text-sm text-muted">The meeting copilot built for your role. Private, on your Mac.</p>
+        </div>
+        <div>
+          <p className={head}>Product</p>
+          <ul className={col}>
+            <li><a href="/features" className="hover:text-ink">Features</a></li>
+            <li><a href="/privacy" className="hover:text-ink">Privacy</a></li>
+            <li><a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="hover:text-ink">Join waitlist</a></li>
+          </ul>
+        </div>
+        <div>
+          <p className={head}>Use cases</p>
+          <ul className={col}>
+            {USE_CASES.map(u => <li key={u.slug}><a href={`/use-cases/${u.slug}`} className="hover:text-ink">{u.role}</a></li>)}
+          </ul>
+        </div>
+        <div>
+          <p className={head}>Company</p>
+          <ul className={col}>
+            <li><a href="/about" className="hover:text-ink">About</a></li>
+            <li><a href="/status" className="hover:text-ink">Status</a></li>
+            <li><a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-ink">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <p className="border-t border-line px-4 py-5 text-center text-xs text-faint">© 2026 Roofle</p>
+    </footer>
+  )
+}
+
+function PrivacyPage() {
+  const flow = [
+    ['1', 'Speech to text', 'Local', 'A speech model runs on your Mac and turns your mic and call audio into a transcript. Audio is never uploaded.'],
+    ['2', 'Intelligence', 'Your choice', 'Notes, suggested questions and reviews come from an LLM. You decide which one, and where it runs.'],
+    ['3', 'Storage', 'Local', 'Transcripts and notes are stored on your Mac. Delete them there and they are gone.'],
+  ]
+  const modes = [
+    ['Cloud LLM', 'Add your own API key in Settings. Only the text you choose to send goes to that provider, under their privacy terms. Roofle never sees it.'],
+    ['Local LLM', 'Point Roofle at a model running on your own machine. Speech to text and intelligence both stay local, so nothing leaves your Mac.'],
+  ]
+  const never = [
+    ['No bots', 'Nobody extra joins your call. Roofle runs from your menu bar.'],
+    ['No recordings on our side', 'We never receive your audio, transcripts or meeting content.'],
+    ['Waitlist only', 'Joining the waitlist shares only the details you submit there.'],
+  ]
+  return (
+    <>
+      <section>
+        <div className="mx-auto max-w-6xl px-4 pb-12 pt-32 sm:px-6">
+          <p className="mb-4 font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand">Privacy</p>
+          <h1 className="max-w-3xl text-balance text-4xl font-semibold leading-[1.1] tracking-tight sm:text-6xl">Your conversations, under your control.</h1>
+          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-ink/80">Speech to text runs locally on your Mac. For intelligence you pick the LLM, and that can be a local one too.</p>
+        </div>
+      </section>
+      <Section eyebrow="How your data flows" title="Three steps, you decide the middle one." tint>
+        <ol className="grid gap-4 md:grid-cols-3">
+          {flow.map(([n, t, tag, d]) => (
+            <li key={t} className="rounded-2xl border border-line bg-bg p-6">
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-xs text-faint">{n.padStart(2, '0')}</span>
+                <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${tag === 'Local' ? 'bg-green-soft text-green' : 'bg-brand-tint text-brand-strong dark:text-brand'}`}>{tag}</span>
+              </div>
+              <h3 className="mt-3 text-xl font-semibold">{t}</h3>
+              <p className="mt-2 text-muted">{d}</p>
+            </li>
+          ))}
+        </ol>
+      </Section>
+      <Section eyebrow="Two ways to run" title="Cloud LLM or fully local. Your call.">
+        <div className="grid gap-4 md:grid-cols-2">
+          {modes.map(([t, d]) => (
+            <div key={t} className="rounded-2xl border border-line bg-surface p-6">
+              <h3 className="text-xl font-semibold text-brand-strong dark:text-brand">{t}</h3>
+              <p className="mt-2 text-muted">{d}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 max-w-2xl text-sm text-faint">The local LLM option works for notes, suggested questions and reviews, so you can run Roofle without any data leaving your machine.</p>
+      </Section>
+      <Section eyebrow="Our promise" title="What we never do." tint>
+        <ul className="grid gap-8 sm:grid-cols-3">
+          {never.map(([t, d]) => (
+            <li key={t}>
+              <h3 className="font-semibold text-brand-strong dark:text-brand">{t}</h3>
+              <p className="mt-1 text-muted">{d}</p>
+            </li>
+          ))}
+        </ul>
+        <p className="mt-8 max-w-2xl text-sm text-faint">Consent rules vary by country and company. Let meeting participants know you are transcribing.</p>
+      </Section>
+    </>
+  )
+}
+
 const PAGES: Record<string, [string, () => React.JSX.Element]> = {
+  '/features': ['Features · Roofle', Features],
+  '/privacy': ['Privacy · Roofle', PrivacyPage],
   '/about': ['About · Roofle', About],
   '/status': ['Status · Roofle', Status],
 }
 
 export default function App() {
-  const page = PAGES[location.pathname.replace(/\/$/, '')]
+  const path = location.pathname.replace(/\/$/, '')
+  const page = PAGES[path]
   useEffect(() => { if (page) document.title = page[0] }, [page])
   const Page = page?.[1]
+  const ucSlug = path.startsWith('/use-cases/') ? path.slice('/use-cases/'.length) : null
   return (
     <>
       <Nav />
-      <Toolbar />
       <main>
-        {Page ? <Page /> : <>
-        <Hero />
-        <Intro />
-        <Usps />
-        <Features />
-        <Review />
-        <UseCases />
-        <FAQ />
-        <FinalCTA />
-        </>}
+        {Page ? <Page /> : ucSlug ? <UseCasePage slug={ucSlug} /> : <><Hero /><PersonaShowcase /><HowItWorks /><Roles /><Privacy /><FinalCTA /></>}
       </main>
       <Footer />
     </>
