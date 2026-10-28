@@ -811,7 +811,7 @@ function Pricing() {
     document.head.append(m)
     return () => m.remove()
   }, [])
-  const perks = ['Every feature, today and everything we ship later', 'Free for life. No card, no trial clock', 'Live notes, suggested questions, recaps and follow-ups', 'On-device transcription, bring your own LLM key', 'Direct line to the builders, shape the roadmap']
+  const perks = ['Every feature, today and everything we ship later', 'Free for life. No card, no trial clock', 'Live notes, suggested questions, recaps and follow-ups', 'Direct line to the builders, shape the roadmap']
   return (
     <>
       <section className="relative overflow-hidden">
@@ -828,7 +828,8 @@ function Pricing() {
               {perks.map(t => <li key={t} className="flex gap-3 text-sm"><span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-green/15 text-xs text-green">✓</span>{t}</li>)}
             </ul>
             <a href={CHECKOUT_HREF} data-polar-checkout data-polar-checkout-theme="dark" className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-brand-strong px-5 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand/30 transition hover:opacity-90 dark:bg-brand dark:text-slate-950">Claim your free spot →</a>
-            <p className="mt-3 text-center text-xs text-faint">Takes 30 seconds. Requires an Apple Silicon Mac on macOS 13+.</p>
+            <p className="mt-3 text-center text-sm font-semibold text-green">✓ No credit card required</p>
+            <p className="mt-1 text-center text-xs text-faint">Takes 30 seconds. Requires an Apple Silicon Mac on macOS 13+.</p>
           </div>
         </div>
       </section>
