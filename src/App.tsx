@@ -7,6 +7,8 @@ const WAITLIST_HREF = 'https://forms.gle/RbKUuNMHeTYw9ifz7'
 // TODO: fill these in before sharing the About page widely; they render only when set.
 const BUILDER: { name: string; note: string } | null = null
 const CONTACT_EMAIL = 'support@roofle.app'
+const DMG_HREF = 'https://xxvvtplmqwrhtqij.public.blob.vercel-storage.com/roofle-beta/Roofle_1.0.0-beta_aarch64.dmg?download=1'
+const CHECKOUT_HREF = 'https://buy.polar.sh/polar_cl_tuPB4nEvMM2d5Qe70OA21F3RamZAabsEx370v1oatrC'
 
 function Logo({ size = 28 }: { size?: number }) {
   return <img src="/favicon.svg" width={size} height={size} alt="" className="rounded-lg" />
@@ -802,8 +804,83 @@ function PrivacyPage() {
   )
 }
 
+function Pricing() {
+  useEffect(() => {
+    const m = document.createElement('meta')
+    m.name = 'robots'; m.content = 'noindex,nofollow'
+    document.head.append(m)
+    return () => m.remove()
+  }, [])
+  const perks = ['Every feature, today and everything we ship later', 'Free for life. No card, no trial clock', 'Live notes, suggested questions, recaps and follow-ups', 'On-device transcription, bring your own LLM key', 'Direct line to the builders, shape the roadmap']
+  return (
+    <>
+      <section className="relative overflow-hidden">
+        <div aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 h-96 bg-gradient-to-b from-brand-tint to-transparent" />
+        <div className="mx-auto max-w-6xl px-4 pb-20 pt-36 text-center sm:px-6">
+          <p className="mx-auto inline-flex items-center gap-2 rounded-full border border-line bg-bg px-3 py-1 font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand"><span className="pulse-rec size-1.5 rounded-full bg-brand" />Founding offer · free for early users</p>
+          <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-medium tracking-tight sm:text-6xl">Free for life. Only 3 spots left.</h1>
+          <p className="mx-auto mt-5 max-w-xl text-lg text-muted">Early users pay nothing. Ever. Claim one of the last 3 spots and keep full access forever.</p>
+          <div className="relative mx-auto mt-12 max-w-md rounded-3xl border-2 border-brand bg-bg p-8 text-left shadow-2xl shadow-brand/20">
+            <span className="absolute -top-3 left-8 rounded-full bg-brand-strong px-3 py-1 text-xs font-semibold text-white dark:bg-brand dark:text-slate-950">Last 3 spots</span>
+            <p className="font-serif text-xl">Founding access</p>
+            <p className="mt-3 flex items-baseline gap-3"><span className="font-serif text-7xl font-medium">$0</span><span className="text-muted">forever<br /><s className="text-faint">normally paid</s></span></p>
+            <ul className="mt-6 space-y-3">
+              {perks.map(t => <li key={t} className="flex gap-3 text-sm"><span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-green/15 text-xs text-green">✓</span>{t}</li>)}
+            </ul>
+            <a href={CHECKOUT_HREF} data-polar-checkout data-polar-checkout-theme="dark" className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-brand-strong px-5 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand/30 transition hover:opacity-90 dark:bg-brand dark:text-slate-950">Claim your free spot →</a>
+            <p className="mt-3 text-center text-xs text-faint">Takes 30 seconds. Requires an Apple Silicon Mac on macOS 13+.</p>
+          </div>
+        </div>
+      </section>
+      <Section eyebrow="How it works" title="Three steps to your free spot." tint>
+        <ol className="grid gap-6 sm:grid-cols-3">
+          {[['Claim', 'Click the button and enter your email. No payment needed.'], ['Check your inbox', 'We email you your confirmation and access details.'], ['Start listening', 'Install Roofle and let it coach your next meeting.']].map(([t, d], i) => (
+            <li key={t} className="rounded-2xl border border-line bg-bg p-6"><span className="font-mono text-xs text-brand-strong dark:text-brand">0{i + 1}</span><h3 className="mt-2 font-serif text-xl">{t}</h3><p className="mt-1 text-muted">{d}</p></li>
+          ))}
+        </ol>
+      </Section>
+    </>
+  )
+}
+
+function ThankYou() {
+  const id = new URLSearchParams(location.search).get('checkout_id')
+  const started = useRef(false)
+  useEffect(() => {
+    // Only auto-download for real checkout redirects; the manual link below covers failures.
+    if (!id || started.current) return
+    started.current = true
+    const a = document.createElement('a')
+    a.href = DMG_HREF
+    a.click()
+  }, [id])
+  return (
+    <section className="relative overflow-hidden">
+      <div aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 h-96 bg-gradient-to-b from-brand-tint to-transparent" />
+      <div className="mx-auto max-w-2xl px-4 pb-24 pt-36 text-center sm:px-6">
+        <span className="mx-auto grid size-16 place-items-center rounded-full bg-green/15 text-3xl text-green">✓</span>
+        <h1 className="mt-6 text-4xl font-medium tracking-tight sm:text-5xl">You're in. Welcome to Roofle.</h1>
+        <p className="mt-4 text-lg text-muted">Your free lifetime spot is locked in. Your download should start automatically.</p>
+        <p className="mt-3 text-sm text-muted">Download didn't start? <a href={DMG_HREF} className="font-semibold text-brand-strong underline dark:text-brand">Download Roofle for macOS (.dmg)</a></p>
+        <div className="mt-10 rounded-2xl border border-brand bg-bg p-6 text-left shadow-xl shadow-brand/10">
+          <p className="font-serif text-2xl">📬 Check your email</p>
+          <p className="mt-2 text-muted">We've sent your confirmation and access details to the address you used at checkout. It can take a minute or two, so check spam or promotions if it doesn't show up.</p>
+          <ol className="mt-5 space-y-2 text-sm">
+            {['Open the email from Roofle', 'Open the downloaded .dmg and drag Roofle to Applications', 'Start your first meeting'].map((t, i) => <li key={t} className="flex gap-3"><span className="grid size-5 shrink-0 place-items-center rounded-full bg-brand-tint font-mono text-xs text-brand-strong dark:text-brand">{i + 1}</span>{t}</li>)}
+          </ol>
+        </div>
+        {id && <p className="mt-6 break-all text-xs text-faint">Checkout ID: <code className="font-mono text-ink">{id}</code></p>}
+        <p className="mt-6 text-sm text-muted">Nothing arrived? Write to <a href={`mailto:${CONTACT_EMAIL}`} className="text-brand-strong underline dark:text-brand">{CONTACT_EMAIL}</a> and quote your checkout ID.</p>
+        <div className="mt-8"><Button href="/" variant="ghost">Back home</Button></div>
+      </div>
+    </section>
+  )
+}
+
 const PAGES: Record<string, [string, () => React.JSX.Element]> = {
   '/features': ['Features · Roofle', Features],
+  '/beta-5ce8ad8e1b12': ['Early access · Roofle', Pricing],
+  '/thank-you': ['Thank you · Roofle', ThankYou],
   '/privacy': ['Privacy · Roofle', PrivacyPage],
   '/about': ['About · Roofle', About],
   '/status': ['Status · Roofle', Status],
