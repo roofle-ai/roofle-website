@@ -185,7 +185,7 @@ function Nav() {
             <a href="/privacy" className="text-sm font-bold text-ink/80 transition hover:text-ink">Privacy</a>
           </nav>
         </div>
-        <Button href={WAITLIST_HREF}>Join waitlist</Button>
+        {!location.pathname.startsWith('/beta-') && <Button href={WAITLIST_HREF}>Join waitlist</Button>}
       </div>
     </header>
   )
