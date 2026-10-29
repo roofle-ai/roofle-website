@@ -320,7 +320,7 @@ function Hero() {
             <Button href={DMG_HREF}><Apple />Download</Button>
             <Button href="/features" variant="ghost">Explore features →</Button>
           </div>
-          <p style={{ animationDelay: ".6s" }} className="fade-up mt-4 text-sm text-muted">Free to use. No card required.</p>
+          <p style={{ animationDelay: ".6s" }} className="fade-up mt-4 text-sm text-muted">Free forever.</p>
         </div>
         <div>
           <div className="meeting overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl shadow-indigo-950/20" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
