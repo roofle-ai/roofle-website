@@ -1,17 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
+import Docs from './Docs';
 import { USE_CASES, bySlug } from './use-cases';
 
-// Pre-production traction site: no install or download surface, only a waitlist (Google Form).
-const WAITLIST_HREF = 'https://forms.gle/RbKUuNMHeTYw9ifz7'
+const DMG_HREF = 'https://github.com/roofle-ai/roofle/releases/download/v1.0.0-beta/Roofle_1.0.0-beta_aarch64.dmg'
 
 // TODO: fill these in before sharing the About page widely; they render only when set.
 const BUILDER: { name: string; note: string } | null = null
 const CONTACT_EMAIL = 'support@roofle.app'
-const DMG_HREF = 'https://xxvvtplmqwrhtqij.public.blob.vercel-storage.com/roofle-beta/Roofle_1.0.0-beta_aarch64.dmg?download=1'
-const CHECKOUT_HREF = 'https://buy.polar.sh/polar_cl_tuPB4nEvMM2d5Qe70OA21F3RamZAabsEx370v1oatrC'
 
 function Logo({ size = 28 }: { size?: number }) {
   return <img src="/favicon.svg" width={size} height={size} alt="" className="rounded-lg" />
+}
+
+function Apple() {
+  return <svg viewBox="0 0 24 24" aria-hidden="true" className="mr-2 size-4 fill-current"><path d="M16.37 1.43c0 1.14-.42 2.2-1.25 3.06-.9.94-1.99 1.48-3.17 1.39a3.2 3.2 0 0 1 1.3-2.9c.75-.6 1.8-1.02 3.12-1.55zM20.5 17.3c-.55 1.27-.82 1.84-1.53 2.96-1 1.56-2.4 3.5-4.14 3.51-1.55.02-1.95-1.01-4.05-1-2.1.01-2.54 1.02-4.09 1-1.74-.02-3.07-1.77-4.07-3.33C-.18 16.1-.47 10.99 1.25 8.35c1.22-1.88 3.15-2.98 4.97-2.98 1.85 0 3.01 1.02 4.54 1.02 1.48 0 2.38-1.02 4.52-1.02 1.62 0 3.34.88 4.56 2.4-4 2.19-3.35 7.9.66 9.53z"/></svg>
 }
 
 function Button({ href, children, variant = 'primary' }: { href: string; children: React.ReactNode; variant?: 'primary' | 'ghost' }) {
@@ -182,10 +184,11 @@ function Nav() {
           <nav className="flex items-center gap-6">
             <UseCasesMenu />
             <a href="/features" className="text-sm font-bold text-ink/80 transition hover:text-ink">Features</a>
+            <a href="/docs" className="text-sm font-bold text-ink/80 transition hover:text-ink">Docs</a>
             <a href="/privacy" className="text-sm font-bold text-ink/80 transition hover:text-ink">Privacy</a>
           </nav>
         </div>
-        {!location.pathname.startsWith('/beta-') && <Button href={WAITLIST_HREF}>Join waitlist</Button>}
+        <Button href={DMG_HREF}><Apple />Download</Button>
       </div>
     </header>
   )
@@ -205,11 +208,6 @@ const questions: [string, string, string][] = [
   ['What is the timeline for March review?', 'Unanswered', 'bg-record-soft text-record'],
 ]
 
-const metrics: [string, number][] = [
-  ['Decisions captured', 82], ['Questions resolved', 74], ['Action items', 79],
-  ['Talk–listen balance', 68], ['Engagement', 85], ['Follow-up clarity', 71],
-]
-const total = Math.round(metrics.reduce((a, [, v]) => a + v, 0) / metrics.length)
 
 function AppMock() {
   const [step, setStep] = useState(0)
@@ -272,12 +270,6 @@ function AppMock() {
           </div>
         </div>
       </div>
-      {ended && (
-        <div className="fade-up flex items-center justify-between gap-3 border-t border-line bg-brand-tint px-4 py-3 text-sm">
-          <span className="font-semibold text-brand-strong dark:text-brand">Conversation review ready</span>
-          <span className="text-muted">Score <b className="text-ink">{total}</b> / 100 · Focus: ask about budget earlier</span>
-        </div>
-      )}
     </div>
   )
 }
@@ -325,9 +317,10 @@ function Hero() {
             Pick who you are in the room. Roofle works quietly in the background while you stay in the conversation.
           </p>
           <div style={{ animationDelay: ".5s" }} className="fade-up mt-10 flex flex-wrap gap-3">
-            <Button href={WAITLIST_HREF}>Join the waitlist</Button>
+            <Button href={DMG_HREF}><Apple />Download</Button>
             <Button href="/features" variant="ghost">Explore features →</Button>
           </div>
+          <p style={{ animationDelay: ".6s" }} className="fade-up mt-4 text-sm text-muted">Free to use. No card required.</p>
         </div>
         <div>
           <div className="meeting overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl shadow-indigo-950/20" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
@@ -363,9 +356,8 @@ const features: [string, string][] = [
   ['Recap on demand', 'Zoned out for a moment? Get a recap of the last 30 seconds in one click.'],
   ['Key figures and dates', 'Pulls out the numbers, dates and names that matter, so nothing important is buried in the transcript.'],
   ['Quick follow-up actions', 'One click turns every finished session into follow-up action items.'],
-  ['Conversation review', 'An offline self-assessment once the session ends: a focus area and plain-language explanations. It says so when the transcript is too thin to judge.'],
   ['Menu bar and shortcuts', 'Lives in the menu bar with no Dock icon. Start and stop with a shortcut; nothing records until you do.'],
-  ['On-device', 'Speech recognition and storage run locally. You bring your own LLM key for notes, questions and reviews.'],
+  ['On-device', 'Speech recognition and storage run locally. You bring your own LLM key for notes and questions.'],
 ]
 
 function About() {
@@ -426,9 +418,7 @@ function About() {
 
 function Status() {
   const stages = [
-    ['Now', 'Working prototype', 'Everything on the features list runs today in our own testing.'],
-    ['Next', 'Invite-only beta', 'Waitlist members get invited first, in small batches.'],
-    ['Later', 'Public launch', 'Pricing is shared before launch. Waitlist members get early access and founding pricing.'],
+    ['Now', 'Open source', 'Everything on the features list works today.'],
   ]
   return (
     <>
@@ -442,7 +432,7 @@ function Status() {
           ))}
         </ul>
       </Section>
-      <Section eyebrow="Works today" title="What the prototype does." tint>
+      <Section eyebrow="Works today" title="What Roofle does." tint>
         <ul className="grid max-w-3xl gap-x-8 gap-y-2 text-muted sm:grid-cols-2">
           {features.map(([name]) => <li key={name} className="flex gap-2"><span className="text-green">✓</span>{name}</li>)}
         </ul>
@@ -463,7 +453,6 @@ function UseCasePage({ slug }: { slug: string }) {
           <p className="mb-4 font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand">Roofle for {u.role}</p>
           <h1 className="max-w-3xl text-balance text-4xl font-semibold leading-[1.1] tracking-tight sm:text-6xl">{u.headline}</h1>
           <p className="mt-6 max-w-2xl text-xl leading-relaxed text-ink/80">{u.intro}</p>
-          <div className="mt-8"><Button href={WAITLIST_HREF}>Join the waitlist</Button></div>
         </div>
       </section>
       <Section eyebrow="Where it helps" title="Moments that matter." tint>
@@ -540,7 +529,6 @@ function Features() {
             <li key={name} className="rounded-2xl border border-line bg-bg p-6">
               <h3 className="flex flex-wrap items-center gap-2 text-xl font-semibold">
                 {name}
-                {name === 'Conversation review' && <span className="rounded-full bg-amber-soft px-2 py-0.5 text-[11px] font-semibold text-amber">Coming soon</span>}
               </h3>
               <p className="mt-2 text-muted">{desc}</p>
             </li>
@@ -578,7 +566,7 @@ function PersonaShowcase() {
   const u = USE_CASES[sel]
   return (
     <Section eyebrow="Personalised to you" title="One copilot. Shaped by your role." tint>
-      <p className="-mt-2 max-w-2xl text-lg text-muted">Roofle does not ask the same questions in every call. Pick your role and it changes what it listens for, what it suggests and how it reviews the conversation.</p>
+      <p className="-mt-2 max-w-2xl text-lg text-muted">Roofle does not ask the same questions in every call. Pick your role and it changes what it listens for, and what it suggests.</p>
       <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Choose a role">
         {USE_CASES.map((c, n) => (
           <button
@@ -661,11 +649,11 @@ function Privacy() {
 }
 
 const faqs: [string, string][] = [
-  ['What is Roofle?', 'A Mac app that transcribes your meetings live, takes notes, suggests questions and reviews the call afterwards.'],
+  ['What is Roofle?', 'A Mac app that transcribes your meetings live, takes notes, and suggests questions.'],
   ['Does my audio leave my Mac?', 'No. Speech to text runs locally. Only the text you choose to send goes to the LLM you pick, and that can be a local one.'],
   ['Which meeting tools does it work with?', 'It captures your mic and system audio, so it works with any call app on your Mac.'],
   ['Do I need to tell people I am transcribing?', 'Yes. Consent rules vary by country and company, so let participants know.'],
-  ['How do I get access?', 'Join the waitlist and we will let you know when your spot opens.'],
+  ['How do I install it?', 'Download the .dmg and drag Roofle to Applications. Roofle is free and open source.'],
 ]
 
 function FAQ() {
@@ -695,8 +683,6 @@ function FinalCTA() {
     <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <div className="rounded-3xl bg-ink px-6 py-16 text-center text-bg">
         <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-5xl" style={{ fontFamily: 'var(--font-sans)' }}>Spend your meetings talking, not typing.</h2>
-        <p className="mx-auto mt-4 max-w-xl text-bg/70">Join the waitlist for early access and founding pricing.</p>
-        <a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="mt-8 inline-flex rounded-full bg-brand px-6 py-3 text-sm font-semibold text-white transition hover:opacity-90 dark:text-slate-950">Join the waitlist</a>
       </div>
     </section>
   )
@@ -716,8 +702,8 @@ function Footer() {
           <p className={head}>Product</p>
           <ul className={col}>
             <li><a href="/features" className="hover:text-ink">Features</a></li>
+            <li><a href="/docs" className="hover:text-ink">Docs</a></li>
             <li><a href="/privacy" className="hover:text-ink">Privacy</a></li>
-            <li><a href={WAITLIST_HREF} target="_blank" rel="noopener noreferrer" className="hover:text-ink">Join waitlist</a></li>
           </ul>
         </div>
         <div>
@@ -743,7 +729,7 @@ function Footer() {
 function PrivacyPage() {
   const flow = [
     ['1', 'Speech to text', 'Local', 'A speech model runs on your Mac and turns your mic and call audio into a transcript. Audio is never uploaded.'],
-    ['2', 'Intelligence', 'Your choice', 'Notes, suggested questions and reviews come from an LLM. You decide which one, and where it runs.'],
+    ['2', 'Intelligence', 'Your choice', 'Notes and suggested questions come from an LLM. You decide which one, and where it runs.'],
     ['3', 'Storage', 'Local', 'Transcripts and notes are stored on your Mac. Delete them there and they are gone.'],
   ]
   const modes = [
@@ -753,7 +739,7 @@ function PrivacyPage() {
   const never = [
     ['No bots', 'Nobody extra joins your call. Roofle runs from your menu bar.'],
     ['No recordings on our side', 'We never receive your audio, transcripts or meeting content.'],
-    ['Waitlist only', 'Joining the waitlist shares only the details you submit there.'],
+    ['Open source', 'The code is public, so you can check what Roofle does with your data.'],
   ]
   return (
     <>
@@ -787,7 +773,7 @@ function PrivacyPage() {
             </div>
           ))}
         </div>
-        <p className="mt-4 max-w-2xl text-sm text-faint">The local LLM option works for notes, suggested questions and reviews, so you can run Roofle without any data leaving your machine.</p>
+        <p className="mt-4 max-w-2xl text-sm text-faint">The local LLM option works for notes and suggested questions, so you can run Roofle without any data leaving your machine.</p>
       </Section>
       <Section eyebrow="Our promise" title="What we never do." tint>
         <ul className="grid gap-8 sm:grid-cols-3">
@@ -804,84 +790,9 @@ function PrivacyPage() {
   )
 }
 
-function Pricing() {
-  useEffect(() => {
-    const m = document.createElement('meta')
-    m.name = 'robots'; m.content = 'noindex,nofollow'
-    document.head.append(m)
-    return () => m.remove()
-  }, [])
-  const perks = ['Every feature, today and everything we ship later', 'Free for life. No card, no trial clock', 'Live notes, suggested questions, recaps and follow-ups', 'Direct line to the builders, shape the roadmap']
-  return (
-    <>
-      <section className="relative overflow-hidden">
-        <div aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 h-96 bg-gradient-to-b from-brand-tint to-transparent" />
-        <div className="mx-auto max-w-6xl px-4 pb-20 pt-36 text-center sm:px-6">
-          <p className="mx-auto inline-flex items-center gap-2 rounded-full border border-line bg-bg px-3 py-1 font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand"><span className="pulse-rec size-1.5 rounded-full bg-brand" />Founding offer · free for early users</p>
-          <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-medium tracking-tight sm:text-6xl">Free for life. Only 3 spots left.</h1>
-          <p className="mx-auto mt-5 max-w-xl text-lg text-muted">Early users pay nothing. Ever. Claim one of the last 3 spots and keep full access forever.</p>
-          <div className="relative mx-auto mt-12 max-w-md rounded-3xl border-2 border-brand bg-bg p-8 text-left shadow-2xl shadow-brand/20">
-            <span className="absolute -top-3 left-8 rounded-full bg-brand-strong px-3 py-1 text-xs font-semibold text-white dark:bg-brand dark:text-slate-950">Last 3 spots</span>
-            <p className="font-serif text-xl">Founding access</p>
-            <p className="mt-3 flex items-baseline gap-3"><span className="font-serif text-7xl font-medium">$0</span><span className="text-muted">forever<br /><s className="text-faint">normally paid</s></span></p>
-            <ul className="mt-6 space-y-3">
-              {perks.map(t => <li key={t} className="flex gap-3 text-sm"><span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-green/15 text-xs text-green">✓</span>{t}</li>)}
-            </ul>
-            <a href={CHECKOUT_HREF} data-polar-checkout data-polar-checkout-theme="dark" className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-brand-strong px-5 py-3.5 text-base font-semibold text-white shadow-lg shadow-brand/30 transition hover:opacity-90 dark:bg-brand dark:text-slate-950">Claim your free spot →</a>
-            <p className="mt-3 text-center text-sm font-semibold text-green">✓ No credit card required</p>
-            <p className="mt-1 text-center text-xs text-faint">Takes 30 seconds. Requires an Apple Silicon Mac on macOS 13+.</p>
-          </div>
-        </div>
-      </section>
-      <Section eyebrow="How it works" title="Three steps to your free spot." tint>
-        <ol className="grid gap-6 sm:grid-cols-3">
-          {[['Claim', 'Click the button and enter your email. No payment needed.'], ['Check your inbox', 'We email you your confirmation and access details.'], ['Start listening', 'Install Roofle and let it coach your next meeting.']].map(([t, d], i) => (
-            <li key={t} className="rounded-2xl border border-line bg-bg p-6"><span className="font-mono text-xs text-brand-strong dark:text-brand">0{i + 1}</span><h3 className="mt-2 font-serif text-xl">{t}</h3><p className="mt-1 text-muted">{d}</p></li>
-          ))}
-        </ol>
-      </Section>
-    </>
-  )
-}
-
-function ThankYou() {
-  const id = new URLSearchParams(location.search).get('checkout_id')
-  const started = useRef(false)
-  useEffect(() => {
-    // Only auto-download for real checkout redirects; the manual link below covers failures.
-    if (!id || started.current) return
-    started.current = true
-    const a = document.createElement('a')
-    a.href = DMG_HREF
-    a.click()
-  }, [id])
-  return (
-    <section className="relative overflow-hidden">
-      <div aria-hidden="true" className="absolute inset-x-0 top-0 -z-10 h-96 bg-gradient-to-b from-brand-tint to-transparent" />
-      <div className="mx-auto max-w-2xl px-4 pb-24 pt-36 text-center sm:px-6">
-        <span className="mx-auto grid size-16 place-items-center rounded-full bg-green/15 text-3xl text-green">✓</span>
-        <h1 className="mt-6 text-4xl font-medium tracking-tight sm:text-5xl">You're in. Welcome to Roofle.</h1>
-        <p className="mt-4 text-lg text-muted">Your free lifetime spot is locked in. Your download should start automatically.</p>
-        <p className="mt-3 text-sm text-muted">Download didn't start? <a href={DMG_HREF} className="font-semibold text-brand-strong underline dark:text-brand">Download Roofle for macOS (.dmg)</a></p>
-        <div className="mt-10 rounded-2xl border border-brand bg-bg p-6 text-left shadow-xl shadow-brand/10">
-          <p className="font-serif text-2xl">📬 Check your email</p>
-          <p className="mt-2 text-muted">We've sent your confirmation and access details to the address you used at checkout. It can take a minute or two, so check spam or promotions if it doesn't show up.</p>
-          <ol className="mt-5 space-y-2 text-sm">
-            {['Open the email from Roofle', 'Open the downloaded .dmg and drag Roofle to Applications', 'Start your first meeting'].map((t, i) => <li key={t} className="flex gap-3"><span className="grid size-5 shrink-0 place-items-center rounded-full bg-brand-tint font-mono text-xs text-brand-strong dark:text-brand">{i + 1}</span>{t}</li>)}
-          </ol>
-        </div>
-        {id && <p className="mt-6 break-all text-xs text-faint">Checkout ID: <code className="font-mono text-ink">{id}</code></p>}
-        <p className="mt-6 text-sm text-muted">Nothing arrived? Write to <a href={`mailto:${CONTACT_EMAIL}`} className="text-brand-strong underline dark:text-brand">{CONTACT_EMAIL}</a> and quote your checkout ID.</p>
-        <div className="mt-8"><Button href="/" variant="ghost">Back home</Button></div>
-      </div>
-    </section>
-  )
-}
-
 const PAGES: Record<string, [string, () => React.JSX.Element]> = {
   '/features': ['Features · Roofle', Features],
-  '/beta-5ce8ad8e1b12': ['Early access · Roofle', Pricing],
-  '/thank-you': ['Thank you · Roofle', ThankYou],
+  '/docs': ['Docs · Roofle', Docs],
   '/privacy': ['Privacy · Roofle', PrivacyPage],
   '/about': ['About · Roofle', About],
   '/status': ['Status · Roofle', Status],
