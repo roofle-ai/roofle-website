@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import Docs from './Docs';
+import { DOC_ROUTES } from './docs/pages';
+import { setSeo } from './seo';
 import { USE_CASES, bySlug } from './use-cases';
 
 const DMG_HREF = 'https://github.com/roofle-ai/roofle/releases/download/v1.0.0-beta/Roofle_1.0.0-beta_aarch64.dmg'
@@ -324,12 +325,12 @@ function Hero() {
         </div>
         <div>
           <div className="meeting overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl shadow-indigo-950/20" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-            <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 font-mono text-xs text-muted">
-              <span className="flex items-center gap-3"><span aria-hidden="true" className="hidden gap-1.5 sm:flex"><i className="size-2.5 rounded-full bg-red-400" /><i className="size-2.5 rounded-full bg-amber-400" /><i className="size-2.5 rounded-full bg-green-400" /></span>Call with Maya · Roofle is listening</span>
-              <span>00:{String(12 + i * 5).padStart(2, '0')}</span>
+              <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 font-mono text-xs text-muted">
+                <span className="flex items-center gap-3"><span aria-hidden="true" className="hidden gap-1.5 sm:flex"><i className="size-2.5 rounded-full bg-red-400" /><i className="size-2.5 rounded-full bg-amber-400" /><i className="size-2.5 rounded-full bg-green-400" /></span>Call with Maya · Roofle is listening</span>
+                <span>00:{String(12 + i * 5).padStart(2, '0')}</span>
+              </div>
+              <Call i={i} />
             </div>
-            <Call i={i} />
-          </div>
         </div>
         </div>
       </div>
@@ -356,7 +357,7 @@ const features: [string, string][] = [
   ['Recap on demand', 'Zoned out for a moment? Get a recap of the last 30 seconds in one click.'],
   ['Key figures and dates', 'Pulls out the numbers, dates and names that matter, so nothing important is buried in the transcript.'],
   ['Quick follow-up actions', 'One click turns every finished session into follow-up action items.'],
-  ['Menu bar and shortcuts', 'Lives in the menu bar with no Dock icon. Start and stop with a shortcut; nothing records until you do.'],
+  ['Menu bar and shortcuts', 'Lives in the menu bar and the Dock. Start and stop with a shortcut; nothing records until you do.'],
   ['On-device', 'Speech recognition and storage run locally. You bring your own LLM key for notes and questions.'],
 ]
 
@@ -444,7 +445,7 @@ function Status() {
 
 function UseCasePage({ slug }: { slug: string }) {
   const u = bySlug(slug)
-  useEffect(() => { document.title = `${u?.role ?? 'Use case'} · Roofle` }, [u])
+  useEffect(() => { setSeo(`${u?.role ?? 'Use case'} · Roofle`, `How ${u?.role ?? 'teams'} use Roofle to transcribe on-device, take live notes and ask better follow-up questions.`, location.pathname) }, [u])
   if (!u) return <Section title="Use case not found."><a href="/" className="text-brand-strong underline dark:text-brand">Back home</a></Section>
   return (
     <>
@@ -790,19 +791,23 @@ function PrivacyPage() {
   )
 }
 
-const PAGES: Record<string, [string, () => React.JSX.Element]> = {
-  '/features': ['Features · Roofle', Features],
-  '/docs': ['Docs · Roofle', Docs],
-  '/privacy': ['Privacy · Roofle', PrivacyPage],
-  '/about': ['About · Roofle', About],
-  '/status': ['Status · Roofle', Status],
+const DEFAULT_DESC = 'A macOS menu-bar app that suggests the follow-up questions worth asking, creates one-click action items, and writes your notes, all transcribed on-device.'
+const PAGES: Record<string, [string, () => React.JSX.Element, string]> = {
+  '/features': ['Features · Roofle', Features, 'Live transcription, live notes, suggested follow-up questions and one-click action items, all running from your Mac menu bar.'],
+  '/privacy': ['Privacy · Roofle', PrivacyPage, 'Audio is transcribed on-device and notes are stored locally. See exactly what Roofle keeps and what it sends.'],
+  '/about': ['About · Roofle', About, 'Roofle is a free, open-source macOS menu-bar app that helps you listen, take notes and ask better questions.'],
+  '/status': ['Status · Roofle', Status, 'Current status of Roofle releases and services.'],
 }
 
 export default function App() {
   const path = location.pathname.replace(/\/$/, '')
   const page = PAGES[path]
-  useEffect(() => { if (page) document.title = page[0] }, [page])
-  const Page = page?.[1]
+  const Doc = DOC_ROUTES[path] // docs pages set their own SEO in <DocPage>
+  useEffect(() => {
+    if (page) setSeo(page[0], page[2], path)
+    else if (!Doc && !path.startsWith('/use-cases/')) setSeo('Roofle: Listen. Note. Coach.', DEFAULT_DESC, '/')
+  }, [page, Doc, path])
+  const Page = page?.[1] ?? Doc
   const ucSlug = path.startsWith('/use-cases/') ? path.slice('/use-cases/'.length) : null
   return (
     <>
