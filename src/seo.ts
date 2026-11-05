@@ -8,11 +8,12 @@ function tag(sel: string, make: string, attr: string, val: string) {
 }
 
 /** Client-side SEO: title, description, canonical, OG/Twitter, optional JSON-LD. */
-export function setSeo(title: string, description: string, path = location.pathname, jsonLd?: object) {
+export function setSeo(title: string, description: string, path = location.pathname, jsonLd?: object, type = 'website') {
   const url = SITE + (path === '/' ? '' : path.replace(/\/$/, ''))
   document.title = title
   const m = (k: 'name' | 'property', n: string, v: string) => tag(`meta[${k}="${n}"]`, 'meta', 'content', v).setAttribute(k, n)
   m('name', 'description', description)
+  m('property', 'og:type', type)
   m('property', 'og:title', title); m('property', 'og:description', description); m('property', 'og:url', url)
   m('name', 'twitter:title', title); m('name', 'twitter:description', description)
   tag('link[rel="canonical"]', 'link', 'href', url).setAttribute('rel', 'canonical')

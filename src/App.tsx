@@ -4,8 +4,9 @@ import { setSeo } from './seo';
 import { USE_CASES, bySlug } from './use-cases';
 import { features } from './features/data';
 import { Features } from './features/FeaturesPage';
+import { Blog, BlogPost } from './blog/Blog';
 
-const DMG_HREF = 'https://github.com/roofle-ai/roofle/releases/download/v1.0.0-beta/Roofle_1.0.0-beta_aarch64.dmg'
+const DMG_HREF = 'https://github.com/roofle-ai/roofle/releases/download/v1.0.0/Roofle_1.0.0_aarch64.dmg'
 
 // TODO: fill these in before sharing the About page widely; they render only when set.
 const BUILDER: { name: string; note: string } | null = null
@@ -189,7 +190,8 @@ function Nav() {
             <UseCasesMenu />
             <a href="/features" className="text-sm font-bold text-ink/80 transition hover:text-ink">Features</a>
             <a href="/docs" className="text-sm font-bold text-ink/80 transition hover:text-ink">Docs</a>
-            <a href="/privacy" className="text-sm font-bold text-ink/80 transition hover:text-ink">Privacy</a>
+            <a href="/blog" className="text-sm font-bold text-ink/80 transition hover:text-ink">Blog</a>
+            <a href="https://github.com/roofle-ai/roofle" className="text-sm font-bold text-ink/80 transition hover:text-ink">GitHub</a>
           </nav>
         </div>
         <Button href={DMG_HREF}><Apple />Download</Button>
@@ -321,10 +323,9 @@ function Hero() {
             Pick who you are in the room. Roofle works quietly in the background while you stay in the conversation.
           </p>
           <div style={{ animationDelay: ".5s" }} className="fade-up mt-10 flex flex-wrap gap-3">
-            <Button href={DMG_HREF}><Apple />Download</Button>
+            <Button href={DMG_HREF}><Apple />Download free</Button>
             <Button href="/features" variant="ghost">Explore features →</Button>
           </div>
-          <p style={{ animationDelay: ".6s" }} className="fade-up mt-4 text-sm text-muted">Free forever.</p>
         </div>
         <div>
           <div className="meeting overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl shadow-indigo-950/20" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
@@ -643,7 +644,8 @@ function Footer() {
           <ul className={col}>
             <li><a href="/features" className="hover:text-ink">Features</a></li>
             <li><a href="/docs" className="hover:text-ink">Docs</a></li>
-            <li><a href="/privacy" className="hover:text-ink">Privacy</a></li>
+            <li><a href="/blog" className="hover:text-ink">Blog</a></li>
+            <li><a href="https://github.com/roofle-ai/roofle" className="hover:text-ink">GitHub</a></li>
           </ul>
         </div>
         <div>
@@ -734,6 +736,7 @@ const DEFAULT_DESC = 'A macOS menu-bar app that suggests the follow-up questions
 const PAGES: Record<string, [string, () => React.JSX.Element, string]> = {
   '/features': ['Features · Roofle', Features, 'Live transcription, live notes, suggested follow-up questions and one-click action items, all running from your Mac menu bar.'],
   '/privacy': ['Privacy · Roofle', PrivacyPage, 'Audio is transcribed on-device and notes are stored locally. See exactly what Roofle keeps and what it sends.'],
+  '/blog': ['Blog · Roofle', Blog, 'Notes from the Roofle team on costs, releases and building an open-source meeting copilot.'],
   '/about': ['About · Roofle', About, 'Roofle is a free, open-source macOS menu-bar app that helps you listen, take notes and ask better questions.'],
   '/status': ['Status · Roofle', Status, 'Current status of Roofle releases and services.'],
 }
@@ -744,15 +747,16 @@ export default function App() {
   const Doc = DOC_ROUTES[path] // docs pages set their own SEO in <DocPage>
   useEffect(() => {
     if (page) setSeo(page[0], page[2], path)
-    else if (!Doc && !path.startsWith('/use-cases/')) setSeo('Roofle: Listen. Note. Coach.', DEFAULT_DESC, '/')
+    else if (!Doc && !path.startsWith('/use-cases/') && !path.startsWith('/blog/')) setSeo('Roofle: Listen. Note. Coach.', DEFAULT_DESC, '/')
   }, [page, Doc, path])
   const Page = page?.[1] ?? Doc
   const ucSlug = path.startsWith('/use-cases/') ? path.slice('/use-cases/'.length) : null
+  const blogSlug = path.startsWith('/blog/') ? path.slice('/blog/'.length) : null
   return (
     <>
       <Nav />
       <main>
-        {Page ? <Page /> : ucSlug ? <UseCasePage slug={ucSlug} /> : <><Hero /><PersonaShowcase /><HowItWorks /><Roles /><Privacy /><FAQ /><FinalCTA /></>}
+        {Page ? <Page /> : ucSlug ? <UseCasePage slug={ucSlug} /> : blogSlug ? <BlogPost slug={blogSlug} /> : <><Hero /><PersonaShowcase /><HowItWorks /><Roles /><Privacy /><FAQ /><FinalCTA /></>}
       </main>
       <Footer />
     </>

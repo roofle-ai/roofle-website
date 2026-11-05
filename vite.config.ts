@@ -5,12 +5,15 @@ import tailwindcss from '@tailwindcss/vite'
 import { DOC_PAGES } from './src/docs/meta'
 import { SITE_URL } from './src/site'
 import { USE_CASES } from './src/use-cases'
+import { POSTS } from './src/blog/posts'
 
 // Builds sitemap.xml from the route lists so it never drifts from the site.
-const STATIC = ['', '/features', '/privacy', '/about', '/status']
+const STATIC = ['', '/features', '/privacy', '/blog', '/about', '/status']
 function sitemap(): Plugin {
   const paths = [...STATIC, ...DOC_PAGES.map(p => p.path), ...USE_CASES.map(u => `/use-cases/${u.slug}`)]
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${paths.map(p => `<url><loc>${SITE_URL}${p}</loc></url>`).join('\n')}\n</urlset>\n`
+  const lastmod: Record<string, string> = Object.fromEntries(POSTS.map(b => [`/blog/${b.slug}`, b.date]))
+  paths.push(...Object.keys(lastmod))
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${paths.map(p => `<url><loc>${SITE_URL}${p}</loc>${lastmod[p] ? `<lastmod>${lastmod[p]}</lastmod>` : ''}</url>`).join('\n')}\n</urlset>\n`
   return {
     name: 'sitemap',
     generateBundle() { this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: xml }) },

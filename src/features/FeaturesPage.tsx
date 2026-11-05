@@ -30,6 +30,7 @@ export function Features() {
               ))}
             </tbody>
           </table>
+          <p className="mt-8 text-muted">Your audio and notes stay on your Mac. <a href="/privacy" className="underline underline-offset-4 hover:text-ink">Read how Roofle handles privacy →</a></p>
         </div>
       </section>
       {sel && d && <FeatureModal name={sel} detail={d} onClose={() => setSel(null)} />}
