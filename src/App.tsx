@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { DOC_ROUTES } from './docs/pages';
 import { setSeo } from './seo';
 import { USE_CASES, bySlug } from './use-cases';
+import { features } from './features/data';
+import { Features } from './features/FeaturesPage';
 
 const DMG_HREF = 'https://github.com/roofle-ai/roofle/releases/download/v1.0.0-beta/Roofle_1.0.0-beta_aarch64.dmg'
 
@@ -350,17 +352,6 @@ function Section({ id, title, eyebrow, children, tint }: { id?: string; title: s
   )
 }
 
-const features: [string, string][] = [
-  ['Suggested questions', 'Spots gaps and vague points worth asking about. A notification suggests the question and jumps to the exact line it came from.'],
-  ['Live transcription', 'Listens to your mic and the system audio at once. Every line is tagged by source, so you know who said what.'],
-  ['Live notes', 'One short notes document, rewritten as the conversation moves: summary, key points, decisions and action items.'],
-  ['Recap on demand', 'Zoned out for a moment? Get a recap of the last 30 seconds in one click.'],
-  ['Key figures and dates', 'Pulls out the numbers, dates and names that matter, so nothing important is buried in the transcript.'],
-  ['Quick follow-up actions', 'One click turns every finished session into follow-up action items.'],
-  ['Menu bar and shortcuts', 'Lives in the menu bar and the Dock. Start and stop with a shortcut; nothing records until you do.'],
-  ['On-device', 'Speech recognition and storage run locally. You bring your own LLM key for notes and questions.'],
-]
-
 function About() {
   const points = [
     ['Questions', 'Suggests the follow-up question worth asking, while the conversation is still live.'],
@@ -479,59 +470,6 @@ function UseCasePage({ slug }: { slug: string }) {
             <li key={t}>
               <h3 className="font-semibold text-brand-strong dark:text-brand">{t}</h3>
               <p className="mt-1 text-muted">{d}</p>
-            </li>
-          ))}
-        </ul>
-      </Section>
-    </>
-  )
-}
-
-const FEATURE_GIF: Record<string, string> = {
-  'Suggested questions': '/notification.gif',
-  'Live transcription': '/live-transcription.gif',
-  'Recap on demand': '/live-recap.gif',
-  'Key figures and dates': '/key-dates.gif',
-  'Live notes': '/live-notes.gif',
-  'Quick follow-up actions': '/one-click-follow-up.gif',
-}
-
-function Features() {
-  const shown = features.filter(([n]) => FEATURE_GIF[n])
-  const rest = features.filter(([n]) => !FEATURE_GIF[n])
-  return (
-    <>
-      <section>
-        <div className="mx-auto max-w-6xl px-4 pb-12 pt-32 sm:px-6">
-          <p className="mb-4 font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand">Features</p>
-          <h1 className="max-w-3xl text-balance text-4xl font-semibold leading-[1.1] tracking-tight sm:text-6xl">Everything you need, nothing you have to type.</h1>
-          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-ink/80">Roofle works quietly in the background, so you can stay in the conversation.</p>
-        </div>
-      </section>
-      <section>
-        <div className="mx-auto max-w-6xl space-y-20 px-4 py-12 sm:px-6">
-          {shown.map(([name, desc], n) => (
-            <div key={name} className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
-              <div className={n % 2 ? 'lg:order-2' : ''}>
-                <span className="font-mono text-xs text-faint">{String(n + 1).padStart(2, '0')}</span>
-                <h2 className="mt-2 text-3xl font-semibold tracking-tight" style={{ fontFamily: 'var(--font-sans)' }}>{name}</h2>
-                <p className="mt-3 max-w-md text-lg leading-relaxed text-muted">{desc}</p>
-              </div>
-              <div className="overflow-hidden rounded-2xl border border-line bg-surface shadow-xl shadow-black/10">
-                <img src={FEATURE_GIF[name]} alt={name} loading="lazy" draggable={false} className="aspect-[8/5] w-full object-cover" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-      <Section eyebrow="And more" title="Built to stay out of your way." tint>
-        <ul className="grid gap-8 sm:grid-cols-3">
-          {rest.map(([name, desc]) => (
-            <li key={name} className="rounded-2xl border border-line bg-bg p-6">
-              <h3 className="flex flex-wrap items-center gap-2 text-xl font-semibold">
-                {name}
-              </h3>
-              <p className="mt-2 text-muted">{desc}</p>
             </li>
           ))}
         </ul>
