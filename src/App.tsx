@@ -25,7 +25,8 @@ function Button({ href, children, variant = 'primary' }: { href: string; childre
     variant === 'primary'
       ? 'bg-brand-strong text-white hover:opacity-90 dark:bg-brand dark:text-slate-950'
       : 'border border-line text-ink hover:bg-surface-2'
-  return <a href={href} {...(href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })} className={`${base} ${styles}`}>{children}</a>
+  const onClick = href.endsWith('.dmg') ? () => (window as any).gtag?.('event', 'download_click', { file_name: href.split('/').pop() }) : undefined
+  return <a href={href} onClick={onClick} {...(href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })} className={`${base} ${styles}`}>{children}</a>
 }
 
 // Lines for the hero meeting window.
