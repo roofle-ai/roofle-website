@@ -127,3 +127,8 @@ body { background: var(--bg); color: var(--ink); font-family: var(--font-sans); 
   .fade-up, .pulse-rec, .shine, .reveal, .bar, .talk { animation: none; }
   .hl { animation: none; background-size: 100% 100%; }
 }
+
+@keyframes star-wiggle { 0%,70%,100% { transform: rotate(0) scale(1); } 80% { transform: rotate(-18deg) scale(1.3); } 90% { transform: rotate(14deg) scale(1.3); } }
+.star-btn .star { display: inline-block; animation: star-wiggle 3s ease-in-out infinite; }
+.star-btn:hover .star { animation: none; transform: rotate(72deg) scale(1.35); transition: transform .3s; }
+@media (prefers-reduced-motion: reduce) { .star-btn .star { animation: none; } }

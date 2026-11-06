@@ -191,10 +191,12 @@ function Nav() {
             <a href="/features" className="text-sm font-bold text-ink/80 transition hover:text-ink">Features</a>
             <a href="/docs" className="text-sm font-bold text-ink/80 transition hover:text-ink">Docs</a>
             <a href="/blog" className="text-sm font-bold text-ink/80 transition hover:text-ink">Blog</a>
-            <a href="https://github.com/roofle-ai/roofle" className="text-sm font-bold text-ink/80 transition hover:text-ink">GitHub</a>
           </nav>
         </div>
-        <Button href={DMG_HREF}><Apple />Download</Button>
+        <div className="flex items-center gap-3">
+          <span className="star-btn"><Button href="https://github.com/roofle-ai/roofle" variant="ghost"><span className="star mr-1.5">⭐</span>Star on GitHub</Button></span>
+          <Button href={DMG_HREF}><Apple />Download</Button>
+        </div>
       </div>
     </header>
   )
