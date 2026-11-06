@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
 
+# LLM-readable content: /llms.txt, /llms-full.txt
 Sitemap: https://roofle.app/sitemap.xml

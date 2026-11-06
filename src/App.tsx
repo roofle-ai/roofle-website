@@ -373,12 +373,12 @@ function Hero() {
   )
 }
 
-function Section({ id, title, eyebrow, children, tint }: { id?: string; title: string; eyebrow?: string; children: React.ReactNode; tint?: boolean }) {
+function Section({ id, title, eyebrow, children, tint, h1 }: { id?: string; h1?: boolean; title: string; eyebrow?: string; children: React.ReactNode; tint?: boolean }) {
   return (
     <section id={id} className={tint ? 'bg-surface' : ''}>
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         {eyebrow && <p className="mb-3 font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand">{eyebrow}</p>}
-        <h2 className="max-w-3xl text-3xl font-medium tracking-tight sm:text-5xl">{title}</h2>
+        {h1 ? <h1 className="max-w-3xl text-3xl font-medium tracking-tight sm:text-5xl">{title}</h1> : <h2 className="max-w-3xl text-3xl font-medium tracking-tight sm:text-5xl">{title}</h2>}
         <div className="mt-8">{children}</div>
       </div>
     </section>
@@ -447,12 +447,12 @@ function Status() {
   ]
   return (
     <>
-      <Section eyebrow="Status" title="Where we are.">
+      <Section h1 eyebrow="Status" title="Where we are.">
         <ul className="max-w-3xl divide-y divide-line border-y border-line">
           {stages.map(([when, what, detail]) => (
             <li key={when} className="flex gap-6 py-5">
               <span className={`w-14 shrink-0 font-mono text-xs uppercase tracking-widest ${when === 'Now' ? 'text-brand-strong dark:text-brand' : 'text-faint'}`}>{when}</span>
-              <div><h3 className="font-serif text-xl">{what}</h3><p className="mt-1 text-muted">{detail}</p></div>
+              <div><h2 className="font-serif text-xl">{what}</h2><p className="mt-1 text-muted">{detail}</p></div>
             </li>
           ))}
         </ul>
@@ -825,7 +825,7 @@ export default function App() {
   const Doc = DOC_ROUTES[path] // docs pages set their own SEO in <DocPage>
   useEffect(() => {
     if (page) setSeo(page[0], page[2], path)
-    else if (!Doc && !path.startsWith('/use-cases/') && !path.startsWith('/alternatives/') && !path.startsWith('/blog/')) setSeo('Roofle: Listen. Note. Coach.', DEFAULT_DESC, '/')
+    else if (!Doc && !path.startsWith('/use-cases/') && !path.startsWith('/alternatives/') && !path.startsWith('/blog/')) setSeo('Roofle: Free AI Meeting Copilot for Mac', DEFAULT_DESC, '/')
   }, [page, Doc, path])
   const Page = page?.[1] ?? Doc
   const ucSlug = path.startsWith('/use-cases/') ? path.slice('/use-cases/'.length) : null

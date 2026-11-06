@@ -1,15 +1,19 @@
 import { Analytics, track } from '@vercel/analytics/react'
 import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { createRoot, hydrateRoot } from 'react-dom/client'
 import App from './App'
 import './index.css'
 
-createRoot(document.getElementById('root')!).render(
+const root = document.getElementById('root')!
+const app = (
   <StrictMode>
     <App />
     <Analytics />
-  </StrictMode>,
+  </StrictMode>
 )
+// Prerendered pages ship their HTML in #root; hydrate it. Dev has an empty root.
+if (root.hasChildNodes()) hydrateRoot(root, app)
+else createRoot(root).render(app)
 
 document.addEventListener('click', (e) => {
   const el = (e.target as Element).closest('a, button')
