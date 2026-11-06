@@ -4,7 +4,7 @@ import { SITE_NAME, SITE_URL } from '../site'
 import { POSTS, type Post } from './posts'
 
 const fmt = (d: string) => new Date(d).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
-const text = (body: Post['body']) => body.map(b => typeof b === 'string' ? b : [...b.head, ...b.rows.flat()].join(' ')).join(' ')
+const text = (body: Post['body']) => body.map(b => typeof b === 'string' ? b : 'src' in b ? b.alt : [...b.head, ...b.rows.flat()].join(' ')).join(' ')
 const mins = (body: Post['body']) => Math.max(1, Math.round(text(body).split(/\s+/).length / 220))
 // Renders **bold** and [text](url) inside a paragraph.
 const inline = (t: string) => t.split(/(\*\*.+?\*\*|\[[^\]]+\]\([^)]+\))/g).map((x, i) => {
@@ -63,7 +63,12 @@ export function BlogPost({ slug }: { slug: string }) {
       </header>
       <div className="mx-auto max-w-[42rem] px-5 py-14 sm:px-6">
         <div className="space-y-6 text-[1.0625rem] leading-[1.8] text-ink sm:text-lg sm:leading-[1.8]">
-          {p.body.map((t, i) => typeof t !== 'string'
+          {p.body.map((t, i) => typeof t !== 'string' && 'src' in t
+            ? <figure key={i} className="!my-10 font-sans">
+                <img src={t.src} alt={t.alt} loading="lazy" className="w-full rounded-2xl border border-line" />
+                {t.caption && <figcaption className="mt-3 text-sm text-faint">{t.caption}</figcaption>}
+              </figure>
+            : typeof t !== 'string'
             ? <figure key={i} className="!my-10 font-sans">
                 <div className="overflow-x-auto rounded-2xl border border-line">
                   <table className="w-full min-w-[32rem] text-left text-base">
