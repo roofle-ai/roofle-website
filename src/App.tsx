@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { DOC_ROUTES } from './docs/pages';
 import { setSeo } from './seo';
 import { USE_CASES, bySlug } from './use-cases';
+import { ALTERNATIVES, CHECKED, altBySlug } from './alternatives';
 import { features } from './features/data';
 import { Features } from './features/FeaturesPage';
 import { Blog, BlogPost } from './blog/Blog';
@@ -181,12 +182,14 @@ function UseCasesMenu() {
 }
 
 function Nav() {
+  const [menu, setMenu] = useState(false)
+  const link = 'block rounded-xl px-3 py-3 text-base font-semibold text-ink/80 hover:bg-surface-2 hover:text-ink'
   return (
     <header className="fixed inset-x-0 top-0 z-30 bg-bg/80 backdrop-blur">
       <div className="flex h-16 w-full items-center justify-between px-4 sm:px-8 lg:px-16">
         <div className="flex items-center gap-8">
           <a href="/" className="flex items-center gap-2 text-lg font-bold"><Logo /><span className="font-serif text-xl font-semibold">Roofle</span></a>
-          <nav className="flex items-center gap-6">
+          <nav className="hidden items-center gap-6 md:flex">
             <UseCasesMenu />
             <a href="/features" className="text-sm font-bold text-ink/80 transition hover:text-ink">Features</a>
             <a href="/docs" className="text-sm font-bold text-ink/80 transition hover:text-ink">Docs</a>
@@ -194,10 +197,24 @@ function Nav() {
           </nav>
         </div>
         <div className="flex items-center gap-3">
-          <span className="star-btn"><Button href="https://github.com/roofle-ai/roofle" variant="ghost"><span className="star mr-1.5">⭐</span>Star on GitHub</Button></span>
+          <span className="star-btn hidden md:block"><Button href="https://github.com/roofle-ai/roofle" variant="ghost"><span className="star mr-1.5">⭐</span>Star on GitHub</Button></span>
           <Button href={DMG_HREF}><Apple />Download</Button>
+          <button type="button" onClick={() => setMenu(m => !m)} aria-label="Menu" aria-expanded={menu} className="grid size-10 place-items-center rounded-full border border-line md:hidden">
+            <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">{menu ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}</svg>
+          </button>
         </div>
       </div>
+      {menu && (
+        <nav className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-line bg-bg px-4 pb-6 pt-2 md:hidden" onClick={() => setMenu(false)}>
+          <p className="px-3 pb-1 pt-3 font-mono text-[11px] uppercase tracking-widest text-faint">Use cases</p>
+          {USE_CASES.map(u => <a key={u.slug} href={`/use-cases/${u.slug}`} className={link}>{u.role}</a>)}
+          <div className="my-2 border-t border-line" />
+          <a href="/features" className={link}>Features</a>
+          <a href="/docs" className={link}>Docs</a>
+          <a href="/blog" className={link}>Blog</a>
+          <a href="https://github.com/roofle-ai/roofle" target="_blank" rel="noopener noreferrer" className={link}>⭐ Star on GitHub</a>
+        </nav>
+      )}
     </header>
   )
 }
@@ -313,23 +330,34 @@ function Hero() {
     return () => clearInterval(id)
   }, [paused])
   return (
-    <section id="top" className="relative flex min-h-[85vh] items-center overflow-hidden">
+    <section id="top" className="relative overflow-hidden">
       <HeroBackdrop />
-      <div className="relative w-full px-4 py-12 sm:px-8 lg:px-16">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-        <div>
+      <div className="relative w-full px-4 pb-12 pt-28 sm:px-8 lg:px-16">
+        <div className="mx-auto grid max-w-5xl gap-14">
+        <div className="text-center">
+          <p style={{ animationDelay: ".05s" }} className="fade-up mb-6 inline-flex items-center gap-x-2 whitespace-nowrap rounded-full border border-line bg-surface px-3.5 py-1.5 text-xs font-semibold text-ink/80">
+            <a href="https://github.com/roofle-ai/roofle" target="_blank" rel="noopener noreferrer" className="hover:text-ink">Open source</a><span aria-hidden="true">·</span><span>Free</span><span aria-hidden="true">·</span><span>No bot</span><span aria-hidden="true">·</span><a href="/privacy" className="hover:text-ink">On-device</a>
+          </p>
           <h1 style={{ animationDelay: ".15s", fontFamily: "var(--font-display)" }} className="fade-up text-balance text-5xl font-semibold leading-[1.05] tracking-[-0.03em] sm:text-6xl xl:text-7xl">
             The meeting copilot <em className="not-italic text-brand-strong dark:text-brand">built for your role</em>
           </h1>
-          <p style={{ animationDelay: ".3s" }} className="fade-up mt-7 max-w-xl text-lg leading-relaxed text-ink/80 sm:text-xl sm:leading-relaxed">
-            Pick who you are in the room. Roofle works quietly in the background while you stay in the conversation.
+          <p style={{ animationDelay: ".3s" }} className="fade-up mx-auto mt-7 max-w-2xl text-lg leading-relaxed text-ink/80 sm:text-xl sm:leading-relaxed">
+            Free and open source. No bot joins your call, and your audio is transcribed on your Mac. Pick your role and Roofle works quietly in the background while you stay in the conversation.
           </p>
-          <div style={{ animationDelay: ".5s" }} className="fade-up mt-10 flex flex-wrap gap-3">
+          <div style={{ animationDelay: ".5s" }} className="fade-up mt-10 flex flex-wrap justify-center gap-3">
             <Button href={DMG_HREF}><Apple />Download free</Button>
             <Button href="/features" variant="ghost">Explore features →</Button>
           </div>
+          <p style={{ animationDelay: ".6s" }} className="fade-up mt-5 text-sm font-semibold text-muted">Windows coming soon</p>
         </div>
-        <div>
+        <div className="mx-auto w-full">
+          <div className="rounded-3xl bg-gradient-to-br from-brand-tint via-surface to-brand-tint p-3 ring-1 ring-line sm:p-5">
+            <div className="overflow-hidden rounded-xl border border-line bg-bg shadow-2xl shadow-indigo-950/25">
+              <div aria-hidden="true" className="flex items-center gap-1.5 border-b border-line bg-surface px-4 py-2.5"><i className="size-2.5 rounded-full bg-red-400" /><i className="size-2.5 rounded-full bg-amber-400" /><i className="size-2.5 rounded-full bg-green-400" /><span className="ml-3 font-mono text-xs text-muted">Roofle</span></div>
+              <video src="/demo-video.mp4" poster="/demo-poster.jpg" autoPlay muted loop playsInline preload="auto" aria-label="Roofle demo" className="block w-full" />
+            </div>
+          </div>
+          {/* Animated meeting demo, kept for later:
           <div className="meeting overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl shadow-indigo-950/20" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
               <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 font-mono text-xs text-muted">
                 <span className="flex items-center gap-3"><span aria-hidden="true" className="hidden gap-1.5 sm:flex"><i className="size-2.5 rounded-full bg-red-400" /><i className="size-2.5 rounded-full bg-amber-400" /><i className="size-2.5 rounded-full bg-green-400" /></span>Call with Maya · Roofle is listening</span>
@@ -337,6 +365,7 @@ function Hero() {
               </div>
               <Call i={i} />
             </div>
+          */}
         </div>
         </div>
       </div>
@@ -636,7 +665,7 @@ function Footer() {
   const head = 'mb-3 font-mono text-xs uppercase tracking-widest text-faint'
   return (
     <footer className="border-t border-line bg-surface">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.5fr_1fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-[1.5fr_1fr_1fr_1fr_1fr]">
         <div>
           <a href="/" className="flex items-center gap-2 text-lg font-bold"><Logo /><span className="font-serif text-xl font-semibold">Roofle</span></a>
           <p className="mt-3 max-w-xs text-sm text-muted">The meeting copilot built for your role. Private, on your Mac.</p>
@@ -654,6 +683,12 @@ function Footer() {
           <p className={head}>Use cases</p>
           <ul className={col}>
             {USE_CASES.map(u => <li key={u.slug}><a href={`/use-cases/${u.slug}`} className="hover:text-ink">{u.role}</a></li>)}
+          </ul>
+        </div>
+        <div>
+          <p className={head}>Alternatives</p>
+          <ul className={col}>
+            {ALTERNATIVES.map(a => <li key={a.slug}><a href={`/alternatives/${a.slug}`} className="hover:text-ink">{a.name} alternative</a></li>)}
           </ul>
         </div>
         <div>
@@ -734,7 +769,48 @@ function PrivacyPage() {
   )
 }
 
-const DEFAULT_DESC = 'A macOS menu-bar app that suggests the follow-up questions worth asking, creates one-click action items, and writes your notes, all transcribed on-device.'
+function AlternativePage({ slug }: { slug: string }) {
+  const a = altBySlug(slug)
+  useEffect(() => { if (a) setSeo(`${a.name} alternative · Roofle`, `Roofle vs ${a.name}: an honest comparison of privacy, price, bots and live question suggestions.`, location.pathname) }, [a])
+  if (!a) return <Section title="Page not found."><a href="/" className="text-brand-strong underline dark:text-brand">Back home</a></Section>
+  const list = (items: string[]) => <ul className="space-y-3">{items.map(i => <li key={i} className="rounded-xl border border-line bg-surface px-4 py-3">{i}</li>)}</ul>
+  return (
+    <>
+      <section>
+        <div className="mx-auto max-w-6xl px-4 pb-16 pt-32 sm:px-6">
+          <p className="mb-4 font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand">Roofle vs {a.name}</p>
+          <h1 className="max-w-3xl text-balance text-4xl font-semibold leading-[1.1] tracking-tight sm:text-6xl">{a.headline}</h1>
+          <p className="mt-6 max-w-2xl text-xl leading-relaxed text-ink/80">{a.intro}</p>
+          <div className="mt-8"><Button href={DMG_HREF}><Apple />Download free</Button></div>
+        </div>
+      </section>
+      <Section eyebrow="Comparison" title="Side by side." tint>
+        <div className="overflow-x-auto rounded-2xl border border-line bg-bg">
+          <table className="w-full min-w-[32rem] text-left text-sm sm:text-base">
+            <thead><tr className="border-b border-line font-mono text-xs uppercase tracking-widest text-faint"><th className="p-4"></th><th className="p-4">{a.name}</th><th className="p-4 text-brand-strong dark:text-brand">Roofle</th></tr></thead>
+            <tbody>{a.rows.map(([f, them, us]) => <tr key={f} className="border-b border-line last:border-0"><th className="p-4 font-semibold">{f}</th><td className="p-4 text-muted">{them}</td><td className="p-4">{us}</td></tr>)}</tbody>
+          </table>
+        </div>
+        <p className="mt-4 text-sm text-faint">Details about {a.name} checked {CHECKED} and may have changed. Check their site for current plans.</p>
+      </Section>
+      <Section eyebrow="Built around you" title="Pick your role, get a copilot for your job.">
+        <ul className="flex flex-wrap gap-3">
+          {USE_CASES.map(u => <li key={u.slug}><a href={`/use-cases/${u.slug}`} className="inline-block rounded-full border border-line px-4 py-2 text-sm font-semibold transition hover:bg-surface-2">{u.role} →</a></li>)}
+        </ul>
+        <p className="mt-4 max-w-2xl text-muted">Generic note takers give every user the same summary. Roofle shapes the live questions and notes to the conversation you are in.</p>
+      </Section>
+      <Section eyebrow="Be honest" title="Which one fits you?" tint>
+        <div className="grid gap-8 sm:grid-cols-2">
+          <div><h3 className="mb-3 font-semibold">Stay with {a.name} if</h3>{list(a.chooseThem)}</div>
+          <div><h3 className="mb-3 font-semibold text-brand-strong dark:text-brand">Pick Roofle if</h3>{list(a.chooseRoofle)}</div>
+        </div>
+        <p className="mt-8 text-sm text-faint">Other comparisons: {ALTERNATIVES.filter(x => x.slug !== a.slug).map((x, i) => <span key={x.slug}>{i > 0 && ', '}<a href={`/alternatives/${x.slug}`} className="underline">{x.name}</a></span>)}</p>
+      </Section>
+    </>
+  )
+}
+
+const DEFAULT_DESC = 'Free, open-source meeting copilot for Mac. No bot joins your call, and speech is transcribed on-device. Live notes and follow-up questions for your role.'
 const PAGES: Record<string, [string, () => React.JSX.Element, string]> = {
   '/features': ['Features · Roofle', Features, 'Live transcription, live notes, suggested follow-up questions and one-click action items, all running from your Mac menu bar.'],
   '/privacy': ['Privacy · Roofle', PrivacyPage, 'Audio is transcribed on-device and notes are stored locally. See exactly what Roofle keeps and what it sends.'],
@@ -749,16 +825,17 @@ export default function App() {
   const Doc = DOC_ROUTES[path] // docs pages set their own SEO in <DocPage>
   useEffect(() => {
     if (page) setSeo(page[0], page[2], path)
-    else if (!Doc && !path.startsWith('/use-cases/') && !path.startsWith('/blog/')) setSeo('Roofle: Listen. Note. Coach.', DEFAULT_DESC, '/')
+    else if (!Doc && !path.startsWith('/use-cases/') && !path.startsWith('/alternatives/') && !path.startsWith('/blog/')) setSeo('Roofle: Listen. Note. Coach.', DEFAULT_DESC, '/')
   }, [page, Doc, path])
   const Page = page?.[1] ?? Doc
   const ucSlug = path.startsWith('/use-cases/') ? path.slice('/use-cases/'.length) : null
+  const altSlug = path.startsWith('/alternatives/') ? path.slice('/alternatives/'.length) : null
   const blogSlug = path.startsWith('/blog/') ? path.slice('/blog/'.length) : null
   return (
     <>
       <Nav />
       <main>
-        {Page ? <Page /> : ucSlug ? <UseCasePage slug={ucSlug} /> : blogSlug ? <BlogPost slug={blogSlug} /> : <><Hero /><PersonaShowcase /><HowItWorks /><Roles /><Privacy /><FAQ /><FinalCTA /></>}
+        {Page ? <Page /> : ucSlug ? <UseCasePage slug={ucSlug} /> : altSlug ? <AlternativePage slug={altSlug} /> : blogSlug ? <BlogPost slug={blogSlug} /> : <><Hero /><PersonaShowcase /><HowItWorks /><Roles /><Privacy /><FAQ /><FinalCTA /></>}
       </main>
       <Footer />
     </>
