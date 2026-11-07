@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 360" role="img" aria-label="Decision guide for choosing between a native app, whisper.cpp and Roofle for local transcription"><style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#1c1b2e}.t{font-size:15px;font-weight:600}.s{font-size:13px;fill:#5b5a72}.h{font-size:11px;letter-spacing:1.5px;fill:#4f46e5;font-weight:700}.a{fill:#eef0ff;stroke:#4f46e5;stroke-width:2}.q{fill:#fff;stroke:#c9c7e0;stroke-width:1.5}.l{stroke:#4f46e5;stroke-width:2;fill:none}</style><defs><marker id="m" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#4f46e5"/></marker></defs>
+<rect width="800" height="360" rx="16" fill="#fafaff"/>
+<text x="32" y="40" class="h">WHICH ROUTE SHOULD YOU TAKE?</text>
+<rect x="290" y="62" width="220" height="56" rx="12" class="q"/><text x="400" y="86" text-anchor="middle" class="t">Do you need text</text><text x="400" y="106" text-anchor="middle" class="t">while the call is live?</text>
+<path class="l" marker-end="url(#m)" d="M290 90H190"/><path class="l" marker-end="url(#m)" d="M510 90H610"/>
+<text x="240" y="80" text-anchor="middle" class="s">no</text><text x="560" y="80" text-anchor="middle" class="s">yes</text>
+<rect x="60" y="150" width="260" height="56" rx="12" class="q"/><text x="190" y="174" text-anchor="middle" class="t">Are you happy in</text><text x="190" y="194" text-anchor="middle" class="t">a terminal?</text>
+<path class="l" d="M190 118V150" marker-end="url(#m)"/>
+<rect x="480" y="150" width="260" height="56" rx="12" class="q"/><text x="610" y="174" text-anchor="middle" class="t">Want live notes and</text><text x="610" y="194" text-anchor="middle" class="t">questions to ask?</text>
+<path class="l" d="M610 118V150" marker-end="url(#m)"/>
+<path class="l" marker-end="url(#m)" d="M120 206V258"/><path class="l" marker-end="url(#m)" d="M260 206V258"/>
+<text x="106" y="236" text-anchor="end" class="s">yes</text><text x="274" y="236" class="s">no</text>
+<rect x="30" y="258" width="180" height="70" rx="12" class="a"/><text x="120" y="288" text-anchor="middle" class="t">whisper.cpp</text><text x="120" y="308" text-anchor="middle" class="s">free, scriptable</text>
+<rect x="230" y="258" width="180" height="70" rx="12" class="a"/><text x="320" y="288" text-anchor="middle" class="t">A native GUI app</text><text x="320" y="308" text-anchor="middle" class="s">drag, drop, export</text>
+<path class="l" marker-end="url(#m)" d="M610 206V258"/>
+<rect x="500" y="258" width="220" height="70" rx="12" class="a"/><text x="610" y="288" text-anchor="middle" class="t">Roofle</text><text x="610" y="308" text-anchor="middle" class="s">live, on-device, open source</text>
+</svg>

@@ -193,7 +193,6 @@ function Nav() {
             <UseCasesMenu />
             <a href="/features" className="text-sm font-bold text-ink/80 transition hover:text-ink">Features</a>
             <a href="/docs" className="text-sm font-bold text-ink/80 transition hover:text-ink">Docs</a>
-            <a href="/blog" className="text-sm font-bold text-ink/80 transition hover:text-ink">Blog</a>
           </nav>
         </div>
         <div className="flex items-center gap-3">
@@ -211,7 +210,6 @@ function Nav() {
           <div className="my-2 border-t border-line" />
           <a href="/features" className={link}>Features</a>
           <a href="/docs" className={link}>Docs</a>
-          <a href="/blog" className={link}>Blog</a>
           <a href="https://github.com/roofle-ai/roofle" target="_blank" rel="noopener noreferrer" className={link}>⭐ Star on GitHub</a>
         </nav>
       )}
@@ -675,7 +673,6 @@ function Footer() {
           <ul className={col}>
             <li><a href="/features" className="hover:text-ink">Features</a></li>
             <li><a href="/docs" className="hover:text-ink">Docs</a></li>
-            <li><a href="/blog" className="hover:text-ink">Blog</a></li>
             <li><a href="https://github.com/roofle-ai/roofle" className="hover:text-ink">GitHub</a></li>
           </ul>
         </div>
@@ -695,6 +692,7 @@ function Footer() {
           <p className={head}>Company</p>
           <ul className={col}>
             <li><a href="/about" className="hover:text-ink">About</a></li>
+            <li><a href="/blog" className="hover:text-ink">Blog</a></li>
             <li><a href="/status" className="hover:text-ink">Status</a></li>
             <li><a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-ink">Contact</a></li>
           </ul>

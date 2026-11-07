@@ -84,6 +84,8 @@ export function BlogPost({ slug }: { slug: string }) {
               </figure>
             : t.startsWith('## ')
               ? <h2 key={i} className="!mt-14 !mb-0 border-t border-line pt-8 text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]">{t.slice(3)}</h2>
+              : t.startsWith('```')
+              ? <pre key={i} className="overflow-x-auto rounded-2xl border border-line bg-surface p-5 font-mono text-sm leading-relaxed"><code>{t.slice(4, -4)}</code></pre>
               : <p key={i} className={i === 0 ? 'text-xl leading-[1.65] text-muted sm:text-[1.375rem]' : ''}>{inline(t)}</p>)}
         </div>
         <aside className="mt-16 rounded-2xl border border-line bg-surface p-7">

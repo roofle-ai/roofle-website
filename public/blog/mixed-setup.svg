@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 330" role="img" aria-label="Comparison of a fully local setup and a mixed setup where the summary stage sends text to a cloud provider"><style>text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;fill:#1c1b2e}.t{font-size:15px;font-weight:600}.s{font-size:13px;fill:#5b5a72}.h{font-size:11px;letter-spacing:1.5px;fill:#4f46e5;font-weight:700}.b{fill:#fff;stroke:#c9c7e0;stroke-width:1.5}.a{fill:#eef0ff;stroke:#4f46e5;stroke-width:2}.w{fill:#fff4e5;stroke:#e08a00;stroke-width:2}.l{stroke:#4f46e5;stroke-width:2;fill:none}</style><defs><marker id="m" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10z" fill="#4f46e5"/></marker></defs>
+<rect width="800" height="330" rx="16" fill="#fafaff"/>
+<text x="32" y="40" class="h">WHERE YOUR DATA GOES</text>
+<text x="32" y="86" class="t">Fully local</text>
+<g class="a"><rect x="150" y="62" width="130" height="40" rx="8"/><rect x="310" y="62" width="130" height="40" rx="8"/><rect x="470" y="62" width="130" height="40" rx="8"/></g>
+<g class="t" style="text-anchor:middle"><text x="215" y="87">Transcribe</text><text x="375" y="87">Summarize</text><text x="535" y="87">Export</text></g>
+<path class="l" marker-end="url(#m)" d="M282 82H306"/><path class="l" marker-end="url(#m)" d="M442 82H466"/>
+<text x="625" y="87" class="s">Nothing leaves the Mac</text>
+<text x="32" y="186" class="t">Mixed</text>
+<rect x="150" y="162" width="130" height="40" rx="8" class="a"/><text x="215" y="187" text-anchor="middle" class="t">Transcribe</text>
+<rect x="310" y="162" width="130" height="40" rx="8" class="w"/><text x="375" y="187" text-anchor="middle" class="t">Cloud LLM</text>
+<rect x="470" y="162" width="130" height="40" rx="8" class="a"/><text x="535" y="187" text-anchor="middle" class="t">Export</text>
+<path class="l" marker-end="url(#m)" d="M282 182H306"/><path class="l" marker-end="url(#m)" d="M442 182H466"/>
+<text x="625" y="187" class="s" style="fill:#b45f00">Transcript text is sent out</text>
+<rect x="150" y="236" width="130" height="40" rx="8" class="w"/><text x="215" y="261" text-anchor="middle" class="t">Cloud speech</text>
+<text x="310" y="261" class="s" style="fill:#b45f00">Raw audio is sent out. The most sensitive leak of all.</text>
+<text x="400" y="312" text-anchor="middle" class="s">A remote Ollama server on your network is not on-device either, even if you own it.</text>
+</svg>
