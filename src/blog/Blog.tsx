@@ -82,6 +82,8 @@ export function BlogPost({ slug }: { slug: string }) {
                 </div>
                 {t.note && <figcaption className="mt-3 text-sm text-faint">{t.note}</figcaption>}
               </figure>
+            : t.startsWith('### ')
+              ? <h3 key={i} className="!mt-10 !mb-0 text-xl font-semibold tracking-tight text-ink sm:text-2xl">{t.slice(4)}</h3>
             : t.startsWith('## ')
               ? <h2 key={i} className="!mt-14 !mb-0 border-t border-line pt-8 text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]">{t.slice(3)}</h2>
               : t.startsWith('```')
