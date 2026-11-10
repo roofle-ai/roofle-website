@@ -65,7 +65,9 @@ export function BlogPost({ slug }: { slug: string }) {
         <div className="space-y-6 text-[1.0625rem] leading-[1.8] text-ink sm:text-lg sm:leading-[1.8]">
           {p.body.map((t, i) => typeof t !== 'string' && 'src' in t
             ? <figure key={i} className="!my-10 font-sans">
-                <img src={t.src} alt={t.alt} loading="lazy" className="w-full rounded-2xl border border-line" />
+                {t.src.endsWith('.webm')
+                  ? <video src={t.src} aria-label={t.alt} controls muted loop playsInline preload="metadata" className="w-full rounded-2xl border border-line" />
+                  : <img src={t.src} alt={t.alt} loading="lazy" className="w-full rounded-2xl border border-line" />}
                 {t.caption && <figcaption className="mt-3 text-sm text-faint">{t.caption}</figcaption>}
               </figure>
             : typeof t !== 'string'
@@ -85,7 +87,7 @@ export function BlogPost({ slug }: { slug: string }) {
             : t.startsWith('### ')
               ? <h3 key={i} className="!mt-10 !mb-0 text-xl font-semibold tracking-tight text-ink sm:text-2xl">{t.slice(4)}</h3>
             : t.startsWith('## ')
-              ? <h2 key={i} className="!mt-14 !mb-0 border-t border-line pt-8 text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]">{t.slice(3)}</h2>
+              ? <h2 key={i} id={t.slice(3).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')} className="!mt-14 !mb-0 border-t border-line pt-8 text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]">{t.slice(3)}</h2>
               : t.startsWith('```')
               ? <pre key={i} className="overflow-x-auto rounded-2xl border border-line bg-surface p-5 font-mono text-sm leading-relaxed"><code>{t.slice(4, -4)}</code></pre>
               : <p key={i} className={i === 0 ? 'text-xl leading-[1.65] text-muted sm:text-[1.375rem]' : ''}>{inline(t)}</p>)}
