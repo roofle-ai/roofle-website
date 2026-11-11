@@ -21,13 +21,19 @@ function Apple() {
   return <svg viewBox="0 0 24 24" aria-hidden="true" className="mr-2 size-4 fill-current"><path d="M16.37 1.43c0 1.14-.42 2.2-1.25 3.06-.9.94-1.99 1.48-3.17 1.39a3.2 3.2 0 0 1 1.3-2.9c.75-.6 1.8-1.02 3.12-1.55zM20.5 17.3c-.55 1.27-.82 1.84-1.53 2.96-1 1.56-2.4 3.5-4.14 3.51-1.55.02-1.95-1.01-4.05-1-2.1.01-2.54 1.02-4.09 1-1.74-.02-3.07-1.77-4.07-3.33C-.18 16.1-.47 10.99 1.25 8.35c1.22-1.88 3.15-2.98 4.97-2.98 1.85 0 3.01 1.02 4.54 1.02 1.48 0 2.38-1.02 4.52-1.02 1.62 0 3.34.88 4.56 2.4-4 2.19-3.35 7.9.66 9.53z"/></svg>
 }
 
-function Button({ href, children, variant = 'primary' }: { href: string; children: React.ReactNode; variant?: 'primary' | 'ghost' }) {
+function Button({ href, children, variant = 'primary' }: { href: string; children: React.ReactNode; variant?: 'primary' | 'ghost' | 'soft' }) {
   const base = 'inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold transition'
   const styles =
     variant === 'primary'
       ? 'bg-brand-strong text-white hover:opacity-90 dark:bg-brand dark:text-slate-950'
-      : 'border border-line text-ink hover:bg-surface-2'
-  const onClick = href.endsWith('.dmg') ? () => (window as any).gtag?.('event', 'download_click', { file_name: href.split('/').pop() }) : undefined
+      : variant === 'soft'
+        ? 'border border-brand-soft bg-brand-tint text-brand-strong shadow-sm hover:bg-brand-faint'
+        : 'border border-line text-ink hover:bg-surface-2'
+  const onClick = href.endsWith('.dmg')
+    ? () => (window as any).gtag?.('event', 'download_click', { file_name: href.split('/').pop() })
+    : href.includes('github.com')
+      ? () => (window as any).gtag?.('event', 'github_click', { link_url: href })
+      : undefined
   return <a href={href} onClick={onClick} {...(href.startsWith('http') && { target: '_blank', rel: 'noopener noreferrer' })} className={`${base} ${styles}`}>{children}</a>
 }
 
@@ -196,7 +202,7 @@ function Nav() {
           </nav>
         </div>
         <div className="flex items-center gap-3">
-          <span className="star-btn hidden md:block"><Button href="https://github.com/roofle-ai/roofle" variant="ghost"><span className="star mr-1.5">⭐</span>Star on GitHub</Button></span>
+          <span className="star-btn hidden md:block"><Button href="https://github.com/roofle-ai/roofle" variant="soft"><span className="star mr-1.5">⭐</span>Get source code</Button></span>
           <Button href={DMG_HREF}><Apple />Download</Button>
           <button type="button" onClick={() => setMenu(m => !m)} aria-label="Menu" aria-expanded={menu} className="grid size-10 place-items-center rounded-full border border-line md:hidden">
             <svg viewBox="0 0 24 24" className="size-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">{menu ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}</svg>
@@ -210,7 +216,7 @@ function Nav() {
           <div className="my-2 border-t border-line" />
           <a href="/features" className={link}>Features</a>
           <a href="/docs" className={link}>Docs</a>
-          <a href="https://github.com/roofle-ai/roofle" target="_blank" rel="noopener noreferrer" className={link}>⭐ Star on GitHub</a>
+          <a href="https://github.com/roofle-ai/roofle" target="_blank" rel="noopener noreferrer" className={link}>⭐ Get source code</a>
         </nav>
       )}
     </header>
