@@ -189,6 +189,7 @@ function UseCasesMenu() {
 
 function Nav() {
   const [menu, setMenu] = useState(false)
+  const release = useLatestRelease()
   const link = 'block rounded-xl px-3 py-3 text-base font-semibold text-ink/80 hover:bg-surface-2 hover:text-ink'
   return (
     <header className="fixed inset-x-0 top-0 z-30 bg-bg/80 backdrop-blur">
@@ -202,6 +203,7 @@ function Nav() {
           </nav>
         </div>
         <div className="flex items-center gap-3">
+          {release && <a href="/status" className="hidden rounded-full border border-line px-2 py-0.5 font-mono text-xs text-muted hover:text-ink md:block">{release.tag_name}</a>}
           <span className="star-btn hidden md:block"><Button href="https://github.com/roofle-ai/roofle" variant="soft"><span className="star mr-1.5">⭐</span>Get source code</Button></span>
           <Button href={DMG_HREF}><Apple />Download</Button>
           <button type="button" onClick={() => setMenu(m => !m)} aria-label="Menu" aria-expanded={menu} className="grid size-10 place-items-center rounded-full border border-line md:hidden">
@@ -352,7 +354,7 @@ function Hero() {
             <Button href={DMG_HREF}><Apple />Download free</Button>
             <Button href="/features" variant="ghost">Explore features →</Button>
           </div>
-          <p style={{ animationDelay: ".6s" }} className="fade-up mt-5 text-sm font-semibold text-muted">Windows coming soon</p>
+          <p style={{ animationDelay: ".6s" }} className="fade-up mt-5"><code className="select-all rounded-lg border border-line bg-surface px-3 py-1.5 font-mono text-xs text-muted sm:text-sm">brew install --cask roofle-ai/roofle/roofle</code></p>
         </div>
         <div className="mx-auto w-full">
           <div className="rounded-3xl bg-gradient-to-br from-brand-tint via-surface to-brand-tint p-3 ring-1 ring-line sm:p-5">
@@ -361,6 +363,7 @@ function Hero() {
               <video src="/demo-video.mp4" poster="/demo-poster.jpg" autoPlay muted loop playsInline preload="auto" aria-label="Roofle demo" className="block w-full" />
             </div>
           </div>
+          <p className="mt-4 text-center text-sm font-semibold text-muted">The Windows app is coming soon.</p>
           {/* Animated meeting demo, kept for later:
           <div className="meeting overflow-hidden rounded-2xl border border-line bg-bg shadow-2xl shadow-indigo-950/20" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
               <div className="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5 font-mono text-xs text-muted">
@@ -445,6 +448,31 @@ function About() {
   )
 }
 
+type Release = { tag_name: string; html_url: string; published_at: string; body: string }
+let releaseP: Promise<Release | null> | undefined
+function useLatestRelease() {
+  const [r, setR] = useState<Release | null>(null)
+  useEffect(() => {
+    releaseP ??= fetch('https://api.github.com/repos/roofle-ai/roofle/releases/latest').then(x => x.ok ? x.json() : null).catch(() => null)
+    releaseP.then(setR)
+  }, [])
+  return r
+}
+
+function LatestRelease() {
+  const r = useLatestRelease()
+  if (!r) return null
+  // ponytail: raw markdown shown as plain text lines, add a markdown renderer if notes get richer
+  const notes = r.body.split(/\r?\n/).filter(l => l.startsWith('* ')).map(l => l.slice(2).replace(/ by @\S+.*$/, ''))
+  return (
+    <Section eyebrow="Latest release" title={r.tag_name} tint>
+      <p className="font-mono text-xs text-faint">{new Date(r.published_at).toLocaleDateString('en', { dateStyle: 'long' })}</p>
+      <ul className="mt-4 max-w-3xl list-disc space-y-1 pl-5 text-muted">{notes.map(n => <li key={n}>{n}</li>)}</ul>
+      <p className="mt-6"><a href={r.html_url} className="text-brand-strong underline dark:text-brand">Release notes on GitHub</a></p>
+    </Section>
+  )
+}
+
 function Status() {
   const stages = [
     ['Now', 'Open source', 'Everything on the features list works today.'],
@@ -461,7 +489,8 @@ function Status() {
           ))}
         </ul>
       </Section>
-      <Section eyebrow="Works today" title="What Roofle does." tint>
+      <LatestRelease />
+      <Section eyebrow="Works today" title="What Roofle does.">
         <ul className="grid max-w-3xl gap-x-8 gap-y-2 text-muted sm:grid-cols-2">
           {features.map(([name]) => <li key={name} className="flex gap-2"><span className="text-green">✓</span>{name}</li>)}
         </ul>
