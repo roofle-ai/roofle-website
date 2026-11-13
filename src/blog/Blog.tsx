@@ -37,6 +37,8 @@ export function Blog() {
   )
 }
 
+const slugify = (h: string) => h.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
+
 export function BlogPost({ slug }: { slug: string }) {
   const p = POSTS.find(x => x.slug === slug)
   useEffect(() => {
@@ -50,6 +52,7 @@ export function BlogPost({ slug }: { slug: string }) {
       publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
     }, 'article')
   }, [p])
+  const toc = p ? p.body.filter((t): t is string => typeof t === 'string' && t.startsWith('## ')).map(t => t.slice(3)).filter(h => !/table of contents/i.test(h)) : []
   if (!p) return <section className="mx-auto max-w-3xl px-4 py-20 sm:px-6"><p>Post not found. <a href="/blog" className="underline">All posts</a></p></section>
   return (
     <article>
@@ -61,11 +64,19 @@ export function BlogPost({ slug }: { slug: string }) {
           <p className="mt-6 font-mono text-xs text-faint">{SITE_NAME} team · <time dateTime={p.date}>{fmt(p.date)}</time> · {mins(p.body)} min read</p>
         </div>
       </header>
-      <div className="mx-auto max-w-[42rem] px-5 py-14 sm:px-6">
+      <div className="relative mx-auto max-w-[42rem] px-5 py-14 sm:px-6">
+        {toc.length > 2 && <nav aria-label="Table of contents" className="absolute bottom-0 right-full top-14 mr-10 hidden w-56 xl:block">
+          <div className="sticky top-24 font-sans text-sm">
+            <p className="mb-3 font-mono text-xs uppercase tracking-wider text-faint">On this page</p>
+            <ul className="space-y-2 border-l border-line">
+              {toc.map(h => <li key={h}><a href={`#${slugify(h)}`} className="-ml-px block border-l border-transparent pl-4 leading-snug text-muted hover:border-ink hover:text-ink">{h}</a></li>)}
+            </ul>
+          </div>
+        </nav>}
         <div className="space-y-6 text-[1.0625rem] leading-[1.8] text-ink sm:text-lg sm:leading-[1.8]">
           {p.body.map((t, i) => typeof t !== 'string' && 'src' in t
             ? <figure key={i} className="!my-10 font-sans">
-                {t.src.endsWith('.webm')
+                {/\.(webm|mp4)$/.test(t.src)
                   ? <video src={t.src} aria-label={t.alt} controls muted loop playsInline preload="metadata" className="w-full rounded-2xl border border-line" />
                   : <img src={t.src} alt={t.alt} loading="lazy" className="w-full rounded-2xl border border-line" />}
                 {t.caption && <figcaption className="mt-3 text-sm text-faint">{t.caption}</figcaption>}
@@ -87,7 +98,7 @@ export function BlogPost({ slug }: { slug: string }) {
             : t.startsWith('### ')
               ? <h3 key={i} className="!mt-10 !mb-0 text-xl font-semibold tracking-tight text-ink sm:text-2xl">{t.slice(4)}</h3>
             : t.startsWith('## ')
-              ? <h2 key={i} id={t.slice(3).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')} className="!mt-14 !mb-0 border-t border-line pt-8 text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]">{t.slice(3)}</h2>
+              ? <h2 key={i} id={slugify(t.slice(3))} className="!mt-14 !mb-0 border-t border-line pt-8 text-2xl font-semibold tracking-tight text-ink sm:text-[1.75rem]">{t.slice(3)}</h2>
               : t.startsWith('```')
               ? <pre key={i} className="overflow-x-auto rounded-2xl border border-line bg-surface p-5 font-mono text-sm leading-relaxed"><code>{t.slice(4, -4)}</code></pre>
               : <p key={i} className={i === 0 ? 'text-xl leading-[1.65] text-muted sm:text-[1.375rem]' : ''}>{inline(t)}</p>)}
