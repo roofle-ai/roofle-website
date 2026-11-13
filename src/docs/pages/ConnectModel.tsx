@@ -22,7 +22,7 @@ export default function ConnectModel() {
             ['Model', <>The model name exactly as your provider spells it, for example <C>gpt-4o-mini</C>.</>],
             ['API key', 'Your key for that provider. Use Show to check what you typed.'],
           ]} />
-          <Shot name="settings-llm" alt="LLM Configuration in Settings" />
+          <Shot name="settings-llm.webp" alt="LLM Configuration in Settings" />
           <P>Then run the connection test. It confirms the URL, model and key work before your first call.</P>
         </DocSection>
 

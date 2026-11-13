@@ -1,7 +1,7 @@
 import DocPage, { DocSection } from '../components/DocPage'
-import { AFTER_CALL, QUICK_ACTIONS } from '../content'
 import Shot from '../components/Shot'
 import { A, C, H3, K, Note, P, Table } from '../components/ui'
+import { AFTER_CALL, QUICK_ACTIONS } from '../content'
 
 export default function StartMeeting() {
   return (
@@ -25,7 +25,7 @@ export default function StartMeeting() {
             ['Keyboard', <><K>⌘</K> <K>⇧</K> <K>S</K></>],
           ]} />
           <P>Nothing is recorded until you do this. If you join a call late, start Roofle anyway. It picks up from that moment.</P>
-          <Shot name="new-conversation" alt="The New Conversation button and the tray menu entry" />
+          <Shot name="new-conversation.webm" alt="The New Conversation button and the tray menu entry" />
         </DocSection>
 
         <DocSection id="setup" eyebrow="Step 2" title="Choose the type and your goal">
@@ -47,12 +47,12 @@ export default function StartMeeting() {
             ['Planning', 'Agree an owner and a date for each open item'],
           ]} />
           <Note title="Why this matters">Roofle uses the type and goal to spot gaps against what you are trying to achieve. A specific goal gives sharper suggested questions and notes that focus on what you care about.</Note>
-          <Shot name="setup-dialog" alt="Dialog for choosing the conversation type and goal" />
+          <Shot name="setup-dialog.png" alt="Dialog for choosing the conversation type and goal" />
         </DocSection>
 
         <DocSection id="run" eyebrow="Step 3" title="Let it run during the meeting">
           <P>Once you confirm, Roofle works in the background. You can keep your meeting app in front and glance at Roofle when you need it.</P>
-          <Shot name="live-session" alt="Live transcript, notes and suggested questions during a call" />
+          <Shot name="recording-control.png" alt="Recording control" />
           <H3>What you will see</H3>
           <Table head={['Part', 'What it does']} rows={[
             ['Transcript', 'Both sides of the call, tagged by source: your microphone and the system audio.'],

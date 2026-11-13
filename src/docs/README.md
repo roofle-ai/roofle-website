@@ -5,7 +5,7 @@ meta.ts              title, description, intro, order for every docs page (drive
 pages/               one file per page, registered in pages/index.ts
 components/DocPage   standard template: header, sidebar, SEO + JSON-LD, prev/next. Wrap <DocSection>s.
 components/ui.tsx    P, H3, Table, Note, Code, K, C, A
-components/Shot.tsx  screenshot slot: drop public/docs/<name>.png, placeholder shows until then
+components/Shot.tsx  screenshot slot: pass full filename (.png/.webp/.webm) from public/docs, placeholder shows until then
 ```
 
 ## Add a page

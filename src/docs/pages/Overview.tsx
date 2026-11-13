@@ -37,7 +37,7 @@ export default function Overview() {
               ['Screen & System Audio Recording', 'Captures everyone else on the call, from any meeting app on your Mac.'],
             ]} />
             <Note title="Declined by mistake?">Re-enable both under System Settings, Privacy &amp; Security, then restart Roofle.</Note>
-            <Shot name="permissions" alt="macOS permission prompts for Microphone and Screen & System Audio Recording" />
+            <Shot name="permissions.webp" alt="macOS permission prompts for Microphone and Screen & System Audio Recording" />
             <P>The first run also downloads the on-device speech model, so keep an internet connection for that step.</P>
           </DocSection>
 
