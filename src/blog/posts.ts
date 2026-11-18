@@ -2,6 +2,8 @@
 // `body` items: a paragraph string, '## Heading', a table { head, rows }, or an image { src, alt, caption }.
 import type { Post } from './types'
 export type { Table, Img, Post } from './types'
+import { post as meetingMinutesLocalGov } from './articles/meeting-minutes-software-local-government'
+import { post as noteTakingAppMarkdown } from './articles/note-taking-app-markdown'
 import { post as elevenaiAlternatives } from './articles/elevenai-alternatives-meeting-notes-dictation'
 import { post as limitationsOfClaudeMeetings } from './articles/limitations-of-claude-meetings-assistant'
 import { post as zoomVsClaudeMeetings } from './articles/zoom-my-notes-vs-claude-meetings-meeting-copilot'
@@ -16,4 +18,4 @@ import { post as runTranscriptionModelOnMac2026 } from './articles/run-transcrip
 import { post as whyAiMeetingNotesAreNotEnough } from './articles/why-ai-meeting-notes-are-not-enough'
 import { post as whatRoofleCosts } from './articles/what-roofle-costs'
 
-export const POSTS: Post[] = [elevenaiAlternatives, limitationsOfClaudeMeetings, zoomVsClaudeMeetings, howToCheckTokenConsumption, localMeetingNotesAppsCompared, whyMeetingNotesToolsImportant2026, roofleForPmsAndBas, doMeetingNotesNeedTheCloud, openSourceAlternativesToGranolaAndOtter, howToOrganizeMeetingNotes, runTranscriptionModelOnMac2026, whyAiMeetingNotesAreNotEnough, whatRoofleCosts]
+export const POSTS: Post[] = [meetingMinutesLocalGov, noteTakingAppMarkdown, elevenaiAlternatives, limitationsOfClaudeMeetings, zoomVsClaudeMeetings, howToCheckTokenConsumption, localMeetingNotesAppsCompared, whyMeetingNotesToolsImportant2026, roofleForPmsAndBas, doMeetingNotesNeedTheCloud, openSourceAlternativesToGranolaAndOtter, howToOrganizeMeetingNotes, runTranscriptionModelOnMac2026, whyAiMeetingNotesAreNotEnough, whatRoofleCosts]

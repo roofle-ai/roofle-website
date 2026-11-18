@@ -5,7 +5,7 @@ import { USE_CASES, bySlug } from './use-cases';
 import { ALTERNATIVES, CHECKED, altBySlug } from './alternatives';
 import { features } from './features/data';
 import { Features } from './features/FeaturesPage';
-import { Blog, BlogPost } from './blog/Blog';
+import { Blog, BlogPost, blogLd } from './blog/Blog';
 
 const DMG_HREF = 'https://github.com/roofle-ai/roofle/releases/download/v1.0.0/Roofle_1.0.0_aarch64.dmg'
 
@@ -847,7 +847,7 @@ const DEFAULT_DESC = 'Free, open-source meeting copilot for Mac. No bot joins yo
 const PAGES: Record<string, [string, () => React.JSX.Element, string]> = {
   '/features': ['Features · Roofle', Features, 'Live transcription, live notes, suggested follow-up questions and one-click action items, all running from your Mac menu bar.'],
   '/privacy': ['Privacy · Roofle', PrivacyPage, 'Audio is transcribed on-device and notes are stored locally. See exactly what Roofle keeps and what it sends.'],
-  '/blog': ['Blog · Roofle', Blog, 'Notes from the Roofle team on costs, releases and building an open-source meeting copilot.'],
+  '/blog': ['AI Meeting Notes Blog: Guides and Comparisons · Roofle', Blog, 'Guides, comparisons and how-tos on AI meeting notes, local transcription and open-source note takers, from the team building Roofle.'],
   '/about': ['About · Roofle', About, 'Roofle is a free, open-source macOS menu-bar app that helps you listen, take notes and ask better questions.'],
   '/status': ['Status · Roofle', Status, 'Current status of Roofle releases and services.'],
 }
@@ -857,7 +857,7 @@ export default function App() {
   const page = PAGES[path]
   const Doc = DOC_ROUTES[path] // docs pages set their own SEO in <DocPage>
   useEffect(() => {
-    if (page) setSeo(page[0], page[2], path)
+    if (page) setSeo(page[0], page[2], path, path === '/blog' ? blogLd : undefined)
     else if (!Doc && !path.startsWith('/use-cases/') && !path.startsWith('/alternatives/') && !path.startsWith('/blog/')) setSeo('Roofle: Free AI Meeting Copilot for Mac', DEFAULT_DESC, '/')
   }, [page, Doc, path])
   const Page = page?.[1] ?? Doc

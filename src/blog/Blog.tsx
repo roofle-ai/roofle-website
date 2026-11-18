@@ -15,20 +15,27 @@ const inline = (t: string) => t.split(/(\*\*.+?\*\*|\[[^\]]+\]\([^)]+\))/g).map(
 })
 const eyebrow = 'font-mono text-xs uppercase tracking-widest text-brand-strong dark:text-brand'
 
+// JSON-LD for the /blog index: a CollectionPage listing every post. App.tsx passes it to setSeo.
+export const blogLd = {
+  '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'AI Meeting Notes Blog', url: `${SITE_URL}/blog`,
+  publisher: { '@type': 'Organization', name: SITE_NAME, url: SITE_URL },
+  mainEntity: { '@type': 'ItemList', itemListElement: POSTS.map((p, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE_URL}/blog/${p.slug}`, name: p.title })) },
+}
+
 export function Blog() {
   return (
-    <section className="mx-auto max-w-4xl px-4 py-20 sm:px-6">
-      <p className={eyebrow}>Blog</p>
-      <h1 className="mt-3 font-serif text-5xl font-medium tracking-tight sm:text-6xl">Notes from the Roofle team</h1>
-      <p className="mt-4 max-w-2xl text-lg text-muted">Costs, releases and lessons from building an open-source meeting copilot.</p>
-      <ul className="mt-14 grid gap-5">
+    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
+      <span className={`block ${eyebrow}`}>Blog</span>
+      <h1 className="mt-3 font-serif text-5xl font-medium tracking-tight sm:text-6xl">AI Meeting Notes Blog: Guides and Comparisons</h1>
+      <p className="mt-4 max-w-2xl text-lg text-muted">Guides, comparisons and how-tos on AI meeting notes, local transcription and open-source note takers, from the team building Roofle.</p>
+      <ul className="mt-10 grid gap-5 sm:grid-cols-2">
         {POSTS.map(p => (
-          <li key={p.slug}>
-            <a href={`/blog/${p.slug}`} className="group block rounded-2xl border border-line bg-surface p-7 transition hover:-translate-y-0.5 hover:border-brand hover:shadow-lg hover:shadow-indigo-950/10">
+          <li key={p.slug} className="flex">
+            <a href={`/blog/${p.slug}`} className="group flex w-full flex-col rounded-2xl border border-line bg-surface p-6 transition hover:-translate-y-0.5 hover:border-brand hover:shadow-lg hover:shadow-indigo-950/10">
               <p className="font-mono text-xs text-faint"><time dateTime={p.date}>{fmt(p.date)}</time> · {mins(p.body)} min read</p>
-              <h2 className="mt-3 font-serif text-3xl font-medium tracking-tight group-hover:text-brand-strong dark:group-hover:text-brand">{p.title}</h2>
-              <p className="mt-2 text-muted">{p.description}</p>
-              <span className="mt-4 inline-block text-sm font-semibold text-brand-strong dark:text-brand">Read →</span>
+              <h2 className="mt-3 font-serif text-2xl font-medium leading-snug tracking-tight group-hover:text-brand-strong dark:group-hover:text-brand">{p.title}</h2>
+              <p className="mt-2 line-clamp-2 text-muted">{p.description}</p>
+              <span className="mt-auto inline-block pt-4 text-sm font-semibold text-brand-strong dark:text-brand">Read →</span>
             </a>
           </li>
         ))}
