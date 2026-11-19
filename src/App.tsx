@@ -733,7 +733,12 @@ function Footer() {
           </ul>
         </div>
       </div>
-      <p className="border-t border-line px-4 py-5 text-center text-xs text-faint">© 2026 Roofle</p>
+      <div className="flex items-center justify-center gap-3 border-t border-line px-4 py-5 text-xs text-faint">
+        <p>© 2026 Roofle</p>
+        <a href="https://aisotools.com/tool/roofle" target="_blank" rel="noopener" className="inline-block align-middle opacity-50 transition-opacity hover:opacity-100">
+            <img src="https://aisotools.com/badges/aiso-featured-basic.svg" width={110} height={27} alt="Listed on AISO Tools — Roofle" />
+          </a>
+      </div>
     </footer>
   )
 }
@@ -804,7 +809,7 @@ function PrivacyPage() {
 
 function AlternativePage({ slug }: { slug: string }) {
   const a = altBySlug(slug)
-  useEffect(() => { if (a) setSeo(`${a.name} alternative · Roofle`, `Roofle vs ${a.name}: an honest comparison of privacy, price, bots and live question suggestions.`, location.pathname) }, [a])
+  useEffect(() => { if (a) setSeo(`${a.name} alternative · Roofle`, a.faq ? `Best ${a.name} alternative for live meetings: Roofle is free, open source and private. No bot, on-device transcription, live notes and follow-up questions.` : `Roofle vs ${a.name}: an honest comparison of privacy, price, bots and live question suggestions.`, location.pathname) }, [a])
   if (!a) return <Section title="Page not found."><a href="/" className="text-brand-strong underline dark:text-brand">Back home</a></Section>
   const list = (items: string[]) => <ul className="space-y-3">{items.map(i => <li key={i} className="rounded-xl border border-line bg-surface px-4 py-3">{i}</li>)}</ul>
   return (
@@ -837,6 +842,8 @@ function AlternativePage({ slug }: { slug: string }) {
           <div><h3 className="mb-3 font-semibold">Stay with {a.name} if</h3>{list(a.chooseThem)}</div>
           <div><h3 className="mb-3 font-semibold text-brand-strong dark:text-brand">Pick Roofle if</h3>{list(a.chooseRoofle)}</div>
         </div>
+        {a.sections?.map(([h, t]) => <div key={h} className="mt-10 max-w-3xl"><h2 className="text-2xl font-semibold">{h}</h2><p className="mt-3 text-muted">{t}</p></div>)}
+        {a.faq && <div className="mt-10 max-w-3xl"><h2 className="text-2xl font-semibold">Frequently asked questions</h2>{a.faq.map(([q, an]) => <div key={q} className="mt-5"><h3 className="font-semibold">{q}</h3><p className="mt-1 text-muted">{an}</p></div>)}</div>}
         <p className="mt-8 text-sm text-faint">Other comparisons: {ALTERNATIVES.filter(x => x.slug !== a.slug).map((x, i) => <span key={x.slug}>{i > 0 && ', '}<a href={`/alternatives/${x.slug}`} className="underline">{x.name}</a></span>)}</p>
       </Section>
     </>
