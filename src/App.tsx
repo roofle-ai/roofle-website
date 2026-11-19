@@ -843,12 +843,12 @@ function AlternativePage({ slug }: { slug: string }) {
   )
 }
 
-const DEFAULT_DESC = 'Free, open-source meeting copilot for Mac. No bot joins your call, and speech is transcribed on-device. Live notes and follow-up questions for your role.'
+const DEFAULT_DESC = 'Free, open-source (MIT) meeting copilot for Mac. No bot joins your call, speech is transcribed on-device. Live notes and follow-up questions. Code on GitHub.'
 const PAGES: Record<string, [string, () => React.JSX.Element, string]> = {
   '/features': ['Features · Roofle', Features, 'Live transcription, live notes, suggested follow-up questions and one-click action items, all running from your Mac menu bar.'],
   '/privacy': ['Privacy · Roofle', PrivacyPage, 'Audio is transcribed on-device and notes are stored locally. See exactly what Roofle keeps and what it sends.'],
   '/blog': ['AI Meeting Notes Blog: Guides and Comparisons · Roofle', Blog, 'Guides, comparisons and how-tos on AI meeting notes, local transcription and open-source note takers, from the team building Roofle.'],
-  '/about': ['About · Roofle', About, 'Roofle is a free, open-source macOS menu-bar app that helps you listen, take notes and ask better questions.'],
+  '/about': ['About · Roofle', About, 'Roofle is a free, MIT-licensed open-source macOS menu-bar app that helps you listen, take notes and ask better questions. Source on GitHub.'],
   '/status': ['Status · Roofle', Status, 'Current status of Roofle releases and services.'],
 }
 
@@ -858,7 +858,7 @@ export default function App() {
   const Doc = DOC_ROUTES[path] // docs pages set their own SEO in <DocPage>
   useEffect(() => {
     if (page) setSeo(page[0], page[2], path, path === '/blog' ? blogLd : undefined)
-    else if (!Doc && !path.startsWith('/use-cases/') && !path.startsWith('/alternatives/') && !path.startsWith('/blog/')) setSeo('Roofle: Free AI Meeting Copilot for Mac', DEFAULT_DESC, '/')
+    else if (!Doc && !path.startsWith('/use-cases/') && !path.startsWith('/alternatives/') && !path.startsWith('/blog/')) setSeo('Roofle: Free Open-Source AI Meeting Copilot for Mac', DEFAULT_DESC, '/')
   }, [page, Doc, path])
   const Page = page?.[1] ?? Doc
   const ucSlug = path.startsWith('/use-cases/') ? path.slice('/use-cases/'.length) : null
