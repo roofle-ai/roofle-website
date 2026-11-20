@@ -693,6 +693,11 @@ function FinalCTA() {
   )
 }
 
+// Add a badge: one line. Keep height ≤ 32px.
+const FEATURED = [
+  { href: 'https://aisotools.com/tool/roofle', img: 'https://aisotools.com/badges/aiso-featured-basic.svg', w: 110, h: 27, alt: 'Listed on AISO Tools — Roofle' },
+]
+
 function Footer() {
   const col = 'space-y-2 text-sm text-muted'
   const head = 'mb-3 font-mono text-xs uppercase tracking-widest text-faint'
@@ -733,11 +738,19 @@ function Footer() {
           </ul>
         </div>
       </div>
-      <div className="flex items-center justify-center gap-3 border-t border-line px-4 py-5 text-xs text-faint">
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-3 border-t border-line px-4 py-5 text-xs text-faint">
         <p>© 2026 Roofle</p>
-        <a href="https://aisotools.com/tool/roofle" target="_blank" rel="noopener" className="inline-block align-middle opacity-50 transition-opacity hover:opacity-100">
-            <img src="https://aisotools.com/badges/aiso-featured-basic.svg" width={110} height={27} alt="Listed on AISO Tools — Roofle" />
+        <span aria-hidden className="hidden h-4 w-px bg-line sm:block" />
+        <p>Featured on</p>
+        {FEATURED.map(b => (
+          <a key={b.href} href={b.href} target="_blank" rel="noopener" className="inline-block opacity-50 grayscale transition hover:opacity-100 hover:grayscale-0">
+            <img src={b.img} width={b.w} height={b.h} alt={b.alt} loading="lazy" />
           </a>
+        ))}
+        <a data-topaitools4u-badge="verified-listing" href="https://www.topaitools4u.site" target="_blank" rel="noopener" aria-label="Listed on TopAITools4U" className="inline-flex items-center gap-2 opacity-50 grayscale transition hover:opacity-100 hover:grayscale-0">
+          <img src="https://www.topaitools4u.site/logo.svg" alt="TopAITools4U" width={24} height={24} loading="lazy" className="rounded-md" />
+          <span className="leading-tight"><span className="block text-[9px] uppercase tracking-widest">Listed on</span><span className="block text-xs font-semibold">TopAITools4U</span></span>
+        </a>
       </div>
     </footer>
   )
