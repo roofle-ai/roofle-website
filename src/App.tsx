@@ -696,6 +696,7 @@ function FinalCTA() {
 // Add a badge: one line. Keep height ≤ 32px.
 const FEATURED = [
   { href: 'https://aisotools.com/tool/roofle', img: 'https://aisotools.com/badges/aiso-featured-basic.svg', w: 110, h: 27, alt: 'Listed on AISO Tools — Roofle' },
+  { href: 'https://startupfa.me/s/roofle?utm_source=roofle.app', img: 'https://startupfa.me/badges/featured-badge-small.webp', w: 199, h: 32, alt: 'Roofle - Featured on Startup Fame' },
 ]
 
 function Footer() {
