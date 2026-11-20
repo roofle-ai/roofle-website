@@ -698,6 +698,7 @@ const FEATURED = [
   { href: 'https://aisotools.com/tool/roofle', img: 'https://aisotools.com/badges/aiso-featured-basic.svg', w: 110, h: 27, alt: 'Listed on AISO Tools — Roofle' },
   { href: 'https://startupfa.me/s/roofle?utm_source=roofle.app', img: 'https://startupfa.me/badges/featured-badge-small.webp', w: 199, h: 32, alt: 'Roofle - Featured on Startup Fame' },
   { href: 'https://firstlook.tools', img: 'https://firstlook.tools/badge/badge_dark.svg', w: 119, h: 32, alt: 'Featured on First Look' },
+  { href: 'https://findly.tools/roofle?utm_source=roofle', img: 'https://findly.tools/badges/findly-tools-badge-light.svg', w: 102, h: 32, alt: 'Featured on Findly.tools' },
 ]
 
 function Footer() {
